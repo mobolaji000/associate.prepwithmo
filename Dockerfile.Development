@@ -9,7 +9,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 # install dependencies
-RUN pip3.8 install -r requirements.txt
+RUN pip3 install -r requirements.txt
 #RUN pip3 install -I --ignore-installed -r requirements.txt
 
 # copy the content of the local app directory to the working directory

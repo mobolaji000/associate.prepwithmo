@@ -80,6 +80,7 @@ def start_background_jobs_before_first_request():
             print(e)
             traceback.print_exc()
 
+    scheduler = BackgroundScheduler(timezone='US/Central')
     scheduler.add_job(background_job, 'cron', day_of_week='sat', hour='19', minute='45')
     scheduler.start()
 
