@@ -71,7 +71,7 @@ def admin_login():
 def load_user(password):
     return User(awsInstance.get_secret("vensti_admin", 'password'))
 
-
+#trigger
 @server.before_first_request
 def start_background_jobs_before_first_request():
     def background_job():
