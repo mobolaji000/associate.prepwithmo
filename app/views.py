@@ -3,22 +3,22 @@ from werkzeug.urls import url_parse
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from app.config import Config
-from app.forms import PaymentForm
 from app.service import ValidateLogin
 from app.service import User
-from flask_login import login_user, login_required, current_user, logout_user
+from flask_login import login_user,login_required,current_user,logout_user
 import logging
-
-from app.service import StripeInstance
-from app.service import PlaidInstance
+import ast
+import time
+import json
+import os
+import math
 import traceback
-from apscheduler.schedulers.background import BackgroundScheduler
+import threading
 
 from app import server
 from app.aws import AWSInstance
 from app.dbUtil import AppDBUtil
 from flask_login import LoginManager
-
 login_manager = LoginManager()
 login_manager.init_app(server)
 login_manager.login_view = 'admin_login'
@@ -28,8 +28,8 @@ server.logger.setLevel(logging.DEBUG)
 db = SQLAlchemy(server)
 migrate = Migrate(server, db)
 awsInstance = AWSInstance()
-stripeInstance = StripeInstance()
-plaidInstance = PlaidInstance()
+
+
 
 
 @server.route("/")
@@ -72,14 +72,6 @@ def validate_login():
 def admin_login():
     return render_template('admin.html')
 
-
-@server.route('/placeholder', methods=['GET', 'POST'])
-def placeholder():
-    form = PaymentForm()
-    if form.validate_on_submit():
-        flash('Your information is being processed')
-        return redirect(url_for('success'))
-    return render_template('admin.html', form=form)
 
 
 @server.before_first_request
