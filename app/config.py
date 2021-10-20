@@ -1,5 +1,6 @@
 import os
 from app.aws import AWSInstance
+import traceback
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 awsInstance = AWSInstance()
@@ -39,5 +40,6 @@ class Config(object):
     except Exception as e:
         print("error in initialization")
         print(e)
+        traceback.print_exc()
         #trigger10
 
