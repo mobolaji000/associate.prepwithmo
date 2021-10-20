@@ -1,0 +1,427 @@
+from flask import render_template, flash, make_response, redirect, url_for, request, jsonify, Response
+from werkzeug.urls import url_parse
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from app.config import Config
+from app.forms import PaymentForm
+from app.service import ValidateLogin
+from app.service import User
+from flask_login import login_user, login_required, current_user, logout_user
+import logging
+import ast
+import time
+import json
+import os
+import math
+from app.service import StripeInstance
+from app.service import PlaidInstance
+from app.service import SendMessagesToClients
+import traceback
+from app.config import stripe
+import threading
+from apscheduler.schedulers.background import BackgroundScheduler
+
+from app import server
+from app.aws import AWSInstance
+from app.dbUtil import AppDBUtil
+from flask_login import LoginManager
+
+login_manager = LoginManager()
+login_manager.init_app(server)
+login_manager.login_view = 'admin_login'
+
+server.config.from_object(Config)
+server.logger.setLevel(logging.DEBUG)
+db = SQLAlchemy(server)
+migrate = Migrate(server, db)
+awsInstance = AWSInstance()
+stripeInstance = StripeInstance()
+plaidInstance = PlaidInstance()
+
+
+@server.route("/")
+def hello():
+    # server.logger.debug('Processing default request')
+    return ("You have landed on the wrong page")
+
+
+@server.route("/usercode.html")
+def usercode():
+    name = 'Mo'
+    return render_template('usercode.html', name=name)
+
+
+@server.route("/health")
+def health():
+    print("healthy!")
+    return render_template('health.html')
+
+
+@server.route('/validate_login', methods=['POST'])
+def validate_login():
+    username = request.form.to_dict()['username']
+    password = request.form.to_dict()['password']
+    validateLogin = ValidateLogin(username, password)
+    if validateLogin.validateUserName() and validateLogin.validatePassword():
+        flash('login successful')
+        user = User(password)
+        login_user(user)
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('transaction_setup')
+        return redirect(next_page)
+    else:
+        flash('login failed')
+        return redirect('/admin-login')
+
+
+@server.route('/admin-login', methods=['GET', 'POST'])
+def admin_login():
+    return render_template('admin.html')
+
+
+@server.route('/placeholder', methods=['GET', 'POST'])
+def placeholder():
+    form = PaymentForm()
+    if form.validate_on_submit():
+        flash('Your information is being processed')
+        return redirect(url_for('success'))
+    return render_template('admin.html', form=form)
+
+
+@server.before_first_request
+def start_background_jobs_before_first_request():
+    def background_job():
+        try:
+            print(" background job started")
+
+        except Exception as e:
+            print("Error in background job")
+            print(e)
+            traceback.print_exc()
+
+    scheduler.add_job(background_job, 'cron', day_of_week='sat', hour='19', minute='45')
+    scheduler.start()
+
+
+@server.route('/success')
+def success():
+    return render_template('success.html')
+
+
+@server.route('/failure')
+def failure():
+    return render_template('failure.html')
+
+
+@server.route('/transaction_setup')
+@login_required
+def transaction_setup():
+    return render_template('transaction_setup.html')
+
+
+@server.route('/create_transaction', methods=['POST'])
+@login_required
+def create_transaction():
+    try:
+
+        transaction_setup_data = request.form.to_dict()
+        customer = stripeInstance.createCustomer(transaction_setup_data)
+        transaction_setup_data.update({"stripe_customer_id": customer["id"]})
+        # print(transaction_setup_data)
+        transaction_code, number_of_rows_modified = AppDBUtil.createOrModifyClientTransaction(transaction_setup_data, action='create')
+
+        if transaction_setup_data.get('mark_as_paid', '') == 'yes':
+            client_info, products_info = AppDBUtil.getTransactionDetails(transaction_code)
+            stripe_info = parseDataForStripe(client_info)
+            stripeInstance.markCustomerAsChargedOutsideofStripe(stripe_info)
+            AppDBUtil.updateTransactionPaymentStarted(transaction_code)
+            print("marked transaction as paid")
+
+        if transaction_setup_data.get('send_text_and_email', '') == 'yes':
+            try:
+                SendMessagesToClients.sendEmail(to_address=transaction_setup_data['email'], message=transaction_code, type='create')
+                # awsInstance.send_email(to_address=transaction_setup_data['email'])
+                SendMessagesToClients.sendSMS(to_number=transaction_setup_data['phone_number'], message=transaction_code, type='create')
+                flash('Transaction created and email/sms sent to client.')
+            except Exception as e:
+                traceback.print_exc()
+                flash('An error occured while sending an email/sms to the client after creating the transaction.')
+
+        return render_template('generate_transaction_code.html', transaction_code=transaction_code)
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
+        flash('An error occured while creating the transaction.')
+        return redirect(url_for('transaction_setup'))
+
+
+@server.route('/search_transaction', methods=['POST'])
+@login_required
+def search_transaction():
+    search_query = str(request.form['search_query'])
+
+    try:
+        search_results = AppDBUtil.searchTransactions(search_query)
+        # print(search_results)
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
+        flash('An error has occured during the search.')
+        return redirect(url_for('transaction_setup'))
+
+    if not search_results:
+        flash('No transaction has the detail you searched for.')
+        return redirect(url_for('transaction_setup'))
+
+    # print(search_results)
+    return render_template('transaction_setup.html', search_results=search_results)
+
+
+@server.route('/modify_transaction', methods=['POST'])
+@login_required
+def modify_transaction():
+    try:
+        data_to_modify = ast.literal_eval(request.form['data_to_modify'])
+        print(data_to_modify)
+        transaction_code = data_to_modify['transaction_code']
+        transaction_code_again, number_of_rows_modified = AppDBUtil.modifyTransactionDetails(data_to_modify)
+
+        if number_of_rows_modified > 1:
+            print("Somehow ended up with and modified duplicate transaction codes")
+            flash('Somehow ended up with and modified duplicate transaction codes')
+            return redirect(url_for('transaction_setup'))
+
+        if data_to_modify.get('mark_as_paid', '') == 'yes':
+            client_info, products_info = AppDBUtil.getTransactionDetails(transaction_code)
+            stripe_info = parseDataForStripe(client_info)
+            stripeInstance.markCustomerAsChargedOutsideofStripe(stripe_info)
+            AppDBUtil.updateTransactionPaymentStarted(transaction_code)
+            print("marked transaction as paid")
+
+        if data_to_modify.get('send_text_and_email', '') == 'yes':
+            try:
+                SendMessagesToClients.sendEmail(to_address=data_to_modify['email'], message=transaction_code, type='modify')
+                # awsInstance.send_email(to_address=transaction_setup_data['email'])
+                SendMessagesToClients.sendSMS(to_number=data_to_modify['phone_number'], message=transaction_code, type='modify')
+                flash('Transaction modified and email/sms sent to client.')
+            except Exception as e:
+                traceback.print_exc()
+                flash('An error occured while sending an email/sms to the client after modifying the transaction.')
+        else:
+            flash('Transaction sucessfully modified.')
+        return redirect(url_for('transaction_setup'))
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
+        flash('An error occured while modifying the transaction.')
+        return redirect(url_for('transaction_setup'))
+
+    return render_template('transaction_setup.html')
+
+
+@server.route('/delete_transaction', methods=['POST'])
+@login_required
+def delete_transaction():
+    try:
+        transaction_code_to_delete = str(request.form['transaction_code_to_delete'])
+        print(transaction_code_to_delete)
+        AppDBUtil.deleteTransaction(transaction_code_to_delete)
+        flash('Transaction sucessfully deleted.')
+        return redirect(url_for('transaction_setup'))
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
+        flash('An error occured while deleting the transaction.')
+        return redirect(url_for('transaction_setup'))
+
+    return render_template('transaction_setup.html')
+
+
+@server.route('/input_transaction_code', methods=['GET'])
+def input_transaction_code():
+    return render_template('input_transaction_code.html')
+
+
+@server.route('/transaction_page', methods=['POST'])
+def transaction_page():
+    try:
+        client_info, products_info, showACHOverride = AppDBUtil.getTransactionDetails(request.form.to_dict()['transaction_code'])
+    except Exception as e:
+        print(e)
+        flash('An error has occured. Contact Mo.')
+        return redirect(url_for('input_transaction_code'))
+
+    if not client_info and not products_info:
+        flash('You might have put in the wrong code. Try again or contact Mo.')
+        return redirect(url_for('input_transaction_code'))
+
+    stripe_info = parseDataForStripe(client_info)
+
+    response = make_response(render_template('transaction_details.html', stripe_info=stripe_info, client_info=client_info, products_info=products_info, showACHOverride=showACHOverride))
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"  # HTTP 1.1.
+    response.headers["Pragma"] = "no-cache"  # HTTP 1.0.
+    response.headers["Expires"] = "0"  # Proxies.
+
+    return response
+    # return render_template('transaction_details.html', stripe_info=stripe_info, client_info=client_info,products_info=products_info)
+
+
+@login_manager.user_loader
+def load_user(password):
+    return User(awsInstance.get_secret("vensti_admin", 'password'))
+
+
+@server.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('admin_login'))
+
+
+@server.route('/checkout', methods=['POST'])
+def checkout():
+    payment_data = request.form.to_dict()
+    chosen_mode_of_payment = payment_data.get('installment-payment', '') if payment_data.get('installment-payment', '') != '' else payment_data.get('full-payment', '') if payment_data.get('full-payment', '') != '' else payment_data.get(
+        'payment-options', '') if payment_data.get('payment-options', '') != '' else ''
+    stripe_info = ast.literal_eval(payment_data['stripe_info'])
+    stripe_pk = os.environ.get('stripe_pk')
+    if chosen_mode_of_payment.__contains__('ach'):
+        return render_template('plaid_checkout.html', stripe_info=stripe_info, chosen_mode_of_payment=chosen_mode_of_payment)
+    else:
+        return render_template('stripe_checkout.html', stripe_info=stripe_info, chosen_mode_of_payment=chosen_mode_of_payment, stripe_pk=stripe_pk)
+
+
+def parseDataForStripe(client_info):
+    stripe_info = {}
+    stripe_info['name'] = client_info['first_name'] + " " + client_info['last_name']
+    stripe_info['phone_number'] = client_info['phone_number']
+    stripe_info['email'] = client_info['email']
+    stripe_info['stripe_customer_id'] = client_info['stripe_customer_id']
+    stripe_info['transaction_total'] = client_info['transaction_total']
+    stripe_info['deposit'] = client_info.get('deposit', '')
+    stripe_info['transaction_code'] = client_info.get('transaction_code', '')
+    stripe_info['installment_counter'] = client_info.get('installment_counter', '')
+
+    if client_info.get('installments', '') != '':
+        for index, installment in enumerate(client_info.get('installments', '')):
+            stripe_info["date" + "_" + str(index + 1)] = int(time.mktime(installment["date"].timetuple()))
+            stripe_info["amount" + "_" + str(index + 1)] = installment["amount"]
+
+    return stripe_info
+
+
+@server.route('/setup_payment_intent', methods=['POST'])
+def setup_payment_intent():
+    stripe_info = ast.literal_eval(request.form['stripe_info'])
+    client_secret = stripeInstance.setUpIntent(stripe_info)
+    return jsonify({'client_secret': client_secret})
+
+
+@server.route('/execute_card_payment', methods=['POST'])
+def execute_card_payment():
+    chosen_mode_of_payment = request.form['chosen_mode_of_payment']
+    stripe_info = ast.literal_eval(request.form['stripe_info'])
+    payment_id = request.form['payment_id']
+    result = stripeInstance.chargeCustomerViaCard(stripe_info, chosen_mode_of_payment, payment_id)
+    if result['status'] == 'failure':
+        print("Failed because customer did not enter a credit card number to pay via installments.")
+        flash('Enter a credit card number to pay via installments.')
+    else:
+        AppDBUtil.updateTransactionPaymentStarted(stripe_info['transaction_code'])
+
+    return jsonify(result)
+
+
+@server.route("/get_link_token", methods=['POST'])
+def get_link_token():
+    stripe_info = ast.literal_eval(request.form['stripe_info'])
+    link_token = plaidInstance.get_link_token(stripe_info['stripe_customer_id'])
+    return jsonify({'link_token': link_token})
+
+
+@server.route("/exchange_plaid_for_stripe", methods=['POST'])
+def exchange_plaid_for_stripe():
+    # Change sandbox to development to test with live users and change
+    # to production when you're ready to go live!
+    stripe_info = ast.literal_eval(request.form['stripe_info'])
+    public_token = request.form['public_token']
+    account_id = request.form['account_id']
+    chosen_mode_of_payment = request.form['chosen_mode_of_payment']
+    bank_account_token = plaidInstance.exchange_plaid_for_stripe(public_token, account_id)
+    result = stripeInstance.chargeCustomerViaACH(stripe_info, bank_account_token, chosen_mode_of_payment)
+
+    if result['status'] != 'success':
+        print("Attempt to pay via ACH failed")
+        result = {'status': 400}
+    else:
+        AppDBUtil.updateTransactionPaymentStarted(stripe_info['transaction_code'])
+        result = {'status': 200}
+
+    return jsonify(result)
+
+
+@server.route("/stripe_webhook", methods=['POST'])
+def stripe_webhook():
+    payload = json.dumps(request.json)
+    # stripe.api_key = awsInstance.get_secret("stripe_cred", "stripe_api_key_test") or os.environ.get('stripe_api_key_test')
+    # print("api key is ",stripe.api_key)
+    event = None
+
+    try:
+        event = stripe.Event.construct_from(
+            json.loads(payload), stripe.api_key
+        )
+        print("Event is: ")
+        print(event)
+    except ValueError as e:
+        # Invalid payload
+        print("400 error from calling webhook. Check code and logs")
+        print(e)
+        traceback.print_exc()
+        return jsonify({'status': 400})
+
+    # Handle the event
+
+    # handle updating the DB when transactions are paid; these transactions should have transaction codes attahced already
+    try:
+        if event.type == 'transaction.paid':
+            paid_transaction = event.data.object
+            transaction_code = paid_transaction.metadata['transaction_code']
+            amount_paid = paid_transaction.total / 100
+
+            payment_intent = stripe.PaymentIntent.retrieve(paid_transaction.payment_intent, )
+            payment_method = stripe.PaymentMethod.retrieve(payment_intent['payment_method'], )
+            payment_type = payment_method['type']
+
+            if payment_type == 'card':
+                amount_paid = int(math.floor(paid_transaction.total / 103))
+            else:
+                amount_paid = paid_transaction.total / 100
+
+            AppDBUtil.updateAmountPaidAgainstTransaction(transaction_code, amount_paid)
+
+            print("paid transaction is ", paid_transaction)
+            print("transaction code is ", transaction_code)
+
+        # attach transaction code to transactions generated from subscriptions
+        elif event.type == 'transaction.created':
+            created_transaction = event.data.object
+            subscription = created_transaction.get('subscription', None)
+            if subscription:
+                subscription_schedule = stripe.Subscription.retrieve(subscription)['schedule']
+                subscription_schedule_metadata = stripe.SubscriptionSchedule.retrieve(subscription_schedule, ).metadata
+                transaction_code = subscription_schedule_metadata['transaction_code']
+                stripe.Invoice.modify(created_transaction['id'], metadata={"transaction_code": transaction_code}, )
+
+                print("created transaction is ", created_transaction)
+                print("transaction code is ", transaction_code)
+
+        else:
+            print('Unhandled event type {}'.format(event.type))
+    except Exception as e:
+        print("500 error from calling webhook. Check code and logs")
+        print(e)
+        traceback.print_exc()
+        return jsonify({'status': 500})
+
+    return jsonify({'status': 200})
