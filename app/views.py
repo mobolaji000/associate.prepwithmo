@@ -67,6 +67,9 @@ def validate_login():
 def admin_login():
     return render_template('admin.html')
 
+@login_manager.user_loader
+def load_user(password):
+    return User(awsInstance.get_secret("vensti_admin", 'password'))
 
 
 @server.before_first_request
