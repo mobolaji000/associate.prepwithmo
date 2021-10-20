@@ -1,4 +1,3 @@
-from app.models import Transaction,InstallmentPlan,InstallmentInvoice
 from app import db
 from datetime import datetime
 import math
