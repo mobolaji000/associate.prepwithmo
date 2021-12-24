@@ -45,6 +45,25 @@ class Config(object):
             SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://'+str(dbUserName)+':'+str(dbPassword)+'@app-27fee962-3fa3-41cb-aecc-35d29dbd568e-do-user-9096158-0.b.db.ondigitalocean.com:25060/db'
             SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+            USER_APP_NAME = "PrepWithMo Associates"  # Shown in and email templates and page footers
+            USER_ENABLE_EMAIL = True  # Enable email authentication
+            USER_ENABLE_USERNAME = False  # Disable username authentication
+            USER_EMAIL_SENDER_NAME = USER_APP_NAME
+            USER_EMAIL_SENDER_EMAIL = "mo@info.perfectscoremo.com"
+            USER_REQUIRE_RETYPE_PASSWORD = True
+
+            # Flask-Mail SMTP server settings
+            MAIL_SERVER = 'email-smtp.us-east-2.amazonaws.com'
+            MAIL_PORT = 465
+            MAIL_USE_SSL = True
+            MAIL_USE_TLS = False
+            MAIL_USERNAME = os.environ.get('SMTP_Username')
+            MAIL_PASSWORD = os.environ.get('SMTP_Password')
+            MAIL_DEFAULT_SENDER = '"PrepWithMo Associates" <mo@info.perfectscoremo.com>'
+
+            USER_CORPORATION_NAME = 'PrepWithMo'
+            USER_COPYRIGHT_YEAR = 2022
+
         elif os.environ['DEPLOY_REGION'] == 'prod':
 
             os.environ["url_to_start_reminder"] = "https://associate.prepwithmo.com/health"
@@ -54,6 +73,25 @@ class Config(object):
             dbPassword = awsInstance.get_secret("do_db_cred", "password")
             SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://' + str(dbUserName) + ':' + str(dbPassword) + '@app-36443af6-ab5a-4b47-a64e-564101e951d6-do-user-9096158-0.b.db.ondigitalocean.com:25060/db'
             SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+            USER_APP_NAME = "PrepWithMo Associates"  # Shown in and email templates and page footers
+            USER_ENABLE_EMAIL = True  # Enable email authentication
+            USER_ENABLE_USERNAME = False  # Disable username authentication
+            USER_EMAIL_SENDER_NAME = USER_APP_NAME
+            USER_EMAIL_SENDER_EMAIL = "mo@info.perfectscoremo.com"
+            USER_REQUIRE_RETYPE_PASSWORD = True
+
+            # Flask-Mail SMTP server settings
+            MAIL_SERVER = 'email-smtp.us-east-2.amazonaws.com'
+            MAIL_PORT = 465
+            MAIL_USE_SSL = True
+            MAIL_USE_TLS = False
+            MAIL_USERNAME = os.environ.get('SMTP_Username')
+            MAIL_PASSWORD = os.environ.get('SMTP_Password')
+            MAIL_DEFAULT_SENDER = '"PrepWithMo Associates" <mo@info.perfectscoremo.com>'
+
+            USER_CORPORATION_NAME = 'PrepWithMo'
+            USER_COPYRIGHT_YEAR = 2022
 
 
     except Exception as e:
