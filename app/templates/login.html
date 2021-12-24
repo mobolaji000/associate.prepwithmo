@@ -3,34 +3,52 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Transaction Code</title>
+    <title>Login Page</title>
 
     <!-- Bootstrap core CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link href="static/page_style.css" rel="stylesheet" >
 
     <!-- Custom styles for this template -->
+	  <script type="text/javascript">
+		 function finalCheckBeforeSubmit()
+    {
+    var next_page = $("#next_page").attr("data_next_page");
+    //alert(email);
+    $('input[name="next_page"]').val(next_page);
+    }
+    </script>
   </head>
 
   <body class="text-center">
   <div class="container">
   <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
-  <h1 class="h3 mb-3 font-weight-normal">Enter transaction code:</h1>
+  <h1 class="h3 mb-3 font-weight-normal w-25 p-3">Login</h1>
 	     <br>
 
-	  <form class="needs-validation"  class="needs-validation" data-toggle="validator" action="{{ url_for('transaction_page') }}" method="post">
+	  <form class="needs-validation"  class="needs-validation" data-toggle="validator" action="{{ url_for('validate_login') }}" method="post">
 
 		<div class="col-sm">
-								<div class="mb-3">
-									<input id="transaction_code" name="transaction_code" type="text" class="form-control"
-										    required>
-									<label for="transaction_code">Transaction Code</label>
+								<div class="mb-3 w-25 p-3">
+									<input id="email" name="email" type="email" class="form-control"
+										    autocomplete="username" required>
+									<label for="email">Email</label>
 								</div>
+
+			<div class="mb-3 w-25 p-3">
+									<input id="password" name="password" type="text" class="form-control" autocomplete="current-password">
+									<label for="password">Password</label>
+								</div>
+
+			<div class="mb-3 w-25 p-3">
+				<span>If you are logging in for the first time, use the password Mo provided</span>
+			</div>
 							</div>
 	  <br>
 
+		  		   <input id="next_page" name="next_page" hidden  type="text"  data_next_page="{{ next_page }}">
 
-	  <input class="btn btn-primary btn-lg btn-block" type="submit" value="Go To Transaction Page"></input>
+	  <input class="btn btn-primary btn-lg btn-block w-25 p-3" type="submit" value="Login" onclick="finalCheckBeforeSubmit();"></input>
 
 	  </form>
 
@@ -38,7 +56,7 @@
 
 	  <div>
     {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
+    <div class="alert alert-warning w-50 p-3">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
         {{ message }}
     </div>

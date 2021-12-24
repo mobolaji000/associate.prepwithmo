@@ -1,0 +1,139 @@
+
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <meta charset="utf-8">
+    <title>Hours</title>
+
+    <!-- Bootstrap core CSS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		  integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	<link href="static/page_style.css" rel="stylesheet">
+	<script type="text/javascript" src="static/students_reports.js"></script>
+
+    <!-- Custom styles for this template -->
+
+	  <script type="text/javascript">
+
+	  </script>
+
+
+  </head>
+
+  <body class="text-center">
+
+  <div class="container-fluid">
+
+
+	   <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
+  <h1 class="h3 mb-3 font-weight-normal">Enter Students Reports</h1>
+	     <br>
+	  <br>
+<div class="container-fluid" style="width:65%;">
+
+	  <div>
+
+		  <div>
+								<form action="{{url_for('students_reports')}}" method="post">
+
+									<div id="students_feedback" name="students_feedback">
+
+
+											  {% for name in students_data %}
+										{% set student_email = students_emails_data[loop.index0] %}
+
+<div>{{name}}</div>
+<hr class="mb-4" style="height:1px;border:none;color:#333;background-color:#333;width:20%;margin-left:40%;margin-right:10%;">
+<br>
+										<div class="row " style="width:50%; margin-left:25%;">
+
+											<div class="col" style="display:inline-block; width:100%; margin-left: 10%;">
+	<label for={{[student_email,"_vensti_attendance"]|join}}>Attendance</label>
+	<select id={{[student_email,"_vensti_attendance"]|join}} name={{[student_email,"_vensti_attendance"]|join}} class="form-control" required>
+		<option value="" selected disabled hidden></option>
+<option value='Yes'>Yes</option>
+	<option value='No'>No</option>
+	<option value='N/A'>N/A</option>
+	</select>
+
+
+		<br><br>
+												</div>
+
+												<div class="col" style="display:inline-block; width:100%; margin-left: 10%;">
+										<label for={{[student_email,"_vensti_home_work"]|join}}>Homework</label>
+	<select id={{[student_email,"_vensti_home_work"]|join}} name={{[student_email,"_vensti_home_work"]|join}} class="form-control" required/>
+	<option value="" selected disabled hidden></option>
+	<option value='Yes'>Yes</option>
+	<option value='No'>No</option>
+	<option value='N/A'>N/A</option>
+													</select>
+													<br><br>
+										</div>
+										</div>
+
+										<div class="row">
+										<div class="col" style="display:inline-block; width:100%; margin-left: 10%;">
+	<label for={{[student_email,"_vensti_memo_1"]|join}}>What was tutored today?</label>
+	<textarea  id={{[student_email,"_vensti_memo_1"]|join}}  name={{[student_email,"_vensti_memo_1"]|join}} class="form-control" rows="5" required placeholder="What chapters or concepts did you go over with the student today? Don't just name them. Write a few sentences explaining in detail."></textarea>
+											</div>
+
+											<div class="col" style="display:inline-block; width:100%; margin-left: 10%;">
+	<label for={{[student_email,"_vensti_memo_2"]|join}}>What should be completed for tomorrow?</label>
+	<textarea  id={{[student_email,"_vensti_memo_2"]|join}} name={{[student_email,"_vensti_memo_2"]|join}} class="form-control" rows="5" required placeholder="What homework or study instructions have you assigned to the student ahead of your next meeting?"></textarea>
+											</div>
+
+											<div class="col" style="display:inline-block; width:100%; margin-left: 10%;">
+	<label for={{[student_email,"_vensti_memo_3"]|join}}>Any further comments?</label>
+	<textarea  id={{[student_email,"_vensti_memo_3"]|join}} name={{[student_email,"_vensti_memo_3"]|join}} class="form-control" rows="5" required placeholder="Comment on other things you observed e.g tardiness, seriousness etc"></textarea>
+											</div>
+
+											</div>
+
+<datalist id="attendance_options" >
+	<option value='Yes'>
+	<option value='No'>
+	<option value='N/A'>
+</datalist>
+
+										<datalist id="homework_options" >
+	<option value='Yes'>
+	<option value='No'>
+	<option value='N/A'>
+</datalist>
+
+										<br><br><br>
+										<br><br><br>
+
+  {% endfor %}
+									</div>
+
+									<br><input id="submit" name="submit" class="btn btn-primary btn-lg btn-block" type="submit" value="Submit" style="width:25%; margin-left: 40%;">
+								</form>
+							</div>
+		  </div>
+
+
+	  <br> <br>
+
+	   <div >
+
+		    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning w-50 p-3" style="display:inline-block; width:50%;">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+
+		  </div>
+  </div>
+	    <br><br><br>
+	    <div class="container"><a class="link-primary" href="/logout">Logout</a></div>
+	    </div>
+
+  <br><br><br>
+
+  </body>
+</html>

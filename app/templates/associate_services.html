@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Admin Login</title>
+    <title>Associate Services</title>
 
     <!-- Bootstrap core CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -12,35 +12,43 @@
     <!-- Custom styles for this template -->
   </head>
 
-
-
-
-
   <body class="text-center">
+
   <div class="container">
-    <form class="form-signin" method="post" action="{{ url_for('validate_login') }}">
-  <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
-  <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-  <label for="inputUserName" class="sr-only">Username</label>
-  <input type="text" id="inputUserName" name="username" class="form-control" placeholder="Username" required autofocus>
-  <label for="inputPassword" class="sr-only">Password</label>
-  <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
-  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-  <p class="mt-5 mb-3 text-muted">&copy; 2017-2021</p>
-</form>
 
-    <br>
 
-<div>
+	   <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
+  <h1 class="h3 mb-3 font-weight-normal">Associate Services</h1>
+	     <br>
+
+	  <div>
+
+	   <div style="display:inline-block; width:25%; margin-right: 5%;"><a class="btn btn-primary btn-lg btn-block" href="{{url_for('students_reports')}}" role="button">Enter Hours</a></div>
+
+	  <div style="display:inline-block; width:25%;  margin-right: 5%;"><a class="btn btn-primary btn-lg btn-block " href="{{url_for('view_hours')}}" role="button">View Hours</a></div>
+
+	  <div style="display:inline-block; width:25%;  margin-right: 5%;"><a class="btn btn-primary btn-lg btn-block" href="{{url_for('view_memos')}}" role="button">View Memos</a></div>
+
+		  </div>
+
+	  <br> <br> <br> <br> <br>
+
+
+
+		   <div class="container"><a class="link-primary" href="/logout">Logout</a></div>
+
+	  <br><br><br>
+
     {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
+    <div style="width:25%; margin-left: 25%;" class="alert alert-warning w-50 p-3">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
         {{ message }}
     </div>
     {% endfor %}
-</div>
 
   </div>
+
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

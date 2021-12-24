@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		  integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	<link href="static/page_style.css" rel="stylesheet">
+	  	<script type="text/javascript" src="static/view_memos.js"></script>
+
+    <title>Student Memos</title>
+
+	  <script type="text/javascript">
+		  function finalCheckBeforeSendReport()
+		  {
+			$('input[name="start_date"]').prop('required', false);
+			$('input[name="end_date"]').prop('required', false);
+			$('select[name="tutor_or_student_list"]').prop('required', false);
+			$('input[name="search_by_tutor_or_student"]').prop('required', false);
+		  }
+	  </script>
+
+  </head>
+  
+  
+  
+   <body class="text-center">
+  <div class="container">
+      <div class="col-md-8 order-md-1">
+    <form class="form-signin" method="post" action="{{ url_for('view_memos') }}">
+  <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
+  <h4 class="mb-3">View Memos</h4>
+				<hr class="mb-4" style="height:1px;border:none;color:#333;background-color:#333;width:20%;margin-left:40%;margin-right:10%;">
+		 {% if current_user.tutor_email != 'mo@prepwithmo.com' %}
+		<div class="row" >
+					<div class="col-md-6 mb-3" >
+						<div class="form-check">
+  <input class="form-check-input" type="radio" name="search_by_tutor_or_student" id="search_by_tutor" value="search_by_tutor" required>
+  <label class="form-check-label" for="search_by_tutor">
+    Search By Tutor
+  </label>
+</div>
+						</div>
+			<div class="col-md-6 mb-3" >
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="search_by_tutor_or_student" id="search_by_student" value="search_by_student">
+  <label class="form-check-label" for="search_by_student">
+    Search By Student
+  </label>
+</div>
+					</div>
+		</div>
+		<br><br>
+		 {% endif %}
+
+		<div class="row" >
+					<div class="col-md-6 mb-3" style="margin-left:25%;margin-right:10%;">
+						<label id="label_for_tutor_or_student_list" name="label_for_tutor_or_student_list" for="tutor_or_student_list" class="form-label"></label>
+						<select class="form-control" id="tutor_or_student_list" name="tutor_or_student_list" required>
+						</select>
+						<div id="error_for_tutor_or_student_list" name="error_for_tutor_or_student_list" class="invalid-feedback"></div>
+					</div>
+		</div>
+		<br><br>
+
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<label for="start_date" class="form-label">Start Date</label>
+						<input type="date" class="form-control" id="start_date" name="start_date" required/>
+						<div class="invalid-feedback">
+							Valid start date is required.
+						</div>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="end_date" class="form-label">End Date</label>
+						<input type="date" class="form-control" id="end_date" name="end_date" required/>
+						<div class="invalid-feedback">
+							Valid end date is required.
+						</div>
+					</div>
+				</div>
+		 <br> <br> <br>
+		 <div class="row justify-content-center"><input class="btn btn-primary btn-lg btn-block w-25 p-3" type="submit" name="submit" value="View"></div>
+  		<br>
+		<div >
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+		<br><br><br>
+			<div class="d-block my-3" >
+					<div container>
+						 {% if students_reports is mapping %}
+
+  {% for date, reports in students_reports.items() %}
+  <h3 class="mb-3">{{date}}</h3><br><br>
+
+ {% for student_email, student_report in reports.items() %}
+						<div container>
+						   <h2 class="mb-3">{{student_report[0]}}</h2><br>
+						<table class="table">
+  <thead class="thead-dark">
+    <tr>
+		<th scope="col">#</th>
+      <th scope="col">Reports</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <th scope="row">Attendance</th>
+		<td><textarea  id={{[student_email,"_vensti_attendance"]|join}}  name={{[student_email,"_vensti_attendance"]|join}} class="form-control" rows="1" >{{student_report[1]}}</textarea></td>
+    </tr>
+  <tr>
+      <th scope="row">Homework</th>
+		<td><textarea  id={{[student_email,"_vensti_home_work"]|join}}  name={{[student_email,"_vensti_home_work"]|join}} class="form-control" rows="1" >{{student_report[2]}}</textarea></td>
+    </tr>
+  <tr>
+      <th scope="row">Memo_1</th>
+		<td><textarea  id={{[student_email,"_vensti_memo_1"]|join}}  name={{[student_email,"_vensti_memo_1"]|join}} class="form-control" rows="5" >{{student_report[3]}}</textarea></td>
+    </tr>
+  <tr>
+      <th scope="row">Memo_2</th>
+		<td><textarea  id={{[student_email,"_vensti_memo_2"]|join}}  name={{[student_email,"_vensti_memo_2"]|join}} class="form-control" rows="5" >{{student_report[4]}}</textarea></td>
+    </tr>
+  <tr>
+      <th scope="row">Memo_3</th>
+		<td><textarea  id={{[student_email,"_vensti_memo_3"]|join}}  name={{[student_email,"_vensti_memo_3"]|join}} class="form-control" rows="5" >{{student_report[5]}}</textarea></td>
+    </tr>
+  </tbody>
+
+</table>
+							<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="send" id={{[student_email,"_vensti_send_report"]|join}} name={{[student_email,"_vensti_send_report"]|join}}>
+  <label class="form-check-label" for={{[student_email,"_vensti_send_report"]|join}}>
+    Send report
+  </label>
+</div>
+<br><br>
+							</div><br><br>
+
+						  {% endfor %}
+	{% endfor %}
+						{% if students_reports|length != 0 %}
+ 								 <div class="row justify-content-center"><input class="btn btn-primary btn-lg btn-block w-25 p-3" type="submit" name="submit" value="Send" onclick="finalCheckBeforeSendReport();"></div>
+{% else %}
+						<div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+	   <span>No report for the selected options</span>
+    </div>
+						{% endif %}
+					</div>
+			</div>
+				{% endif  %}
+		<br><br><br>
+		<p class="mt-5 mb-3 text-muted">&copy; 2017-2022</p>
+</form>
+      </div>
+	  <br><br><br>
+
+	   <input id="tutors_info" name="tutors_info" hidden data-tutors_info="{{ tutors_info }}">
+	   <input id="students_info" name="students_info" hidden data-students_info="{{ students_info }}">
+
+  </div>
+
+  </body>
+
+</html>
