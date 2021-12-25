@@ -17,8 +17,6 @@ login_manager = LoginManager()
 login_manager.init_app(server)
 #login_manager.login_view = 'login'
 
-
-
 from wtforms import StringField
 from wtforms.fields.html5 import TelField
 from wtforms.validators import DataRequired
@@ -41,9 +39,7 @@ class CustomUserProfileForm(EditUserProfileForm):
 
 # Customize Flask-User
 class CustomUserManager(UserManager):
-
     def customize(self, app):
-
         # Configure customized forms
         self.RegisterFormClass = CustomRegisterForm
         self.UserProfileFormClass = CustomUserProfileForm
@@ -91,9 +87,9 @@ def submit_hours():
     flash(submit_hours_worked_message)
     return redirect(url_for('hours'))
 
-@server.route("/create_password",methods=['GET','POST'])
-def create_password():
-    return render_template('create_password.html')
+# @server.route("/create_password",methods=['GET','POST'])
+# def create_password():
+#     return render_template('create_password.html')
 
 
 # @server.route('/validate_created_password', methods=['POST'])
@@ -194,7 +190,6 @@ def assign_unassign_tutor():
             assign_unassign_result_message = AppDBUtil.assignUnassign(tutor_email,student_email,assign_unassign_tutor_contents['submit'])
             flash(assign_unassign_result_message)
         return redirect('assign_unassign_tutor')
-        #return render_template('assign_unassign_tutor.html')
 
 @server.route('/students_reports',methods=['GET','POST'])
 def students_reports():
@@ -273,9 +268,6 @@ def view_memos():
                 report_by_day.update({report.student_email: [student.student_first_name+" "+student.student_last_name,report.attendance, report.home_work, report.memo_1, report.memo_2, report.memo_3]})
                 students_reports.update({report.day.strftime('%m/%d/%Y'):report_by_day})
 
-            #print(view_memos_contents)
-            #print(existing_submission_by_tutor)
-            #print(students_reports)
         elif  view_memos_contents['submit'] == "Send":
             all_students_reports_to_send = {}
             for key,content in view_memos_contents.items():
@@ -294,14 +286,11 @@ def view_memos():
                     student = AppDBUtil.getStudentByEmail(key)
                     SendMessagesToClients.sendSMS(to_numbers=[student['parent_1_phone_number'],student['parent_2_phone_number'],student['student_phone_number']],message_as_text=memos,message_as_image=not_memos)
 
-    #print(students_reports)
     return render_template('view_memos.html', tutors_info=json.dumps(tutors_info), students_info=json.dumps(students_info), students_reports=students_reports)
 
-
-
-@login_manager.user_loader
-def load_user(tutor_email):
-    return Tutor.query.get(tutor_email)
+# @login_manager.user_loader
+# def load_user(tutor_email):
+#     return Tutor.query.get(tutor_email)
 
 #trigger
 @server.before_first_request
