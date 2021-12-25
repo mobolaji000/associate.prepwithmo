@@ -70,7 +70,7 @@ class AppDBUtil():
 
     @classmethod
     def getTutors(cls):
-        tutors = Tutor.query.filter(Tutor.c.is_active == True).all()
+        tutors = Tutor.query.filter(Tutor.is_active == True).all()
         return tutors
 
     @classmethod
