@@ -286,6 +286,8 @@ def view_memos():
                     student = AppDBUtil.getStudentByEmail(key)
                     SendMessagesToClients.sendSMS(to_numbers=[student['parent_1_phone_number'],student['parent_2_phone_number'],student['student_phone_number']],message_as_text=memos,message_as_image=not_memos)
 
+    print(students_info)
+    print(tutors_info)
     return render_template('view_memos.html', tutors_info=json.dumps(tutors_info), students_info=json.dumps(students_info), students_reports=students_reports)
 
 # @login_manager.user_loader
