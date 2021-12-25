@@ -219,7 +219,7 @@ def students_reports():
 def view_hours():
     hours_worked_by_day = ''
     tutors = {}
-    if current_user.email != 'mo@prepwithmo.com':
+    if 'admin' in current_user.roles :#!= 'mo@prepwithmo.com':
         for tutor in AppDBUtil.getTutors():
             tutors.update({tutor.tutor_email:tutor.tutor_first_name+" "+tutor.tutor_last_name})
     if request.method == 'POST':
