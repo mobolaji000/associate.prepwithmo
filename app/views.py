@@ -219,7 +219,11 @@ def students_reports():
 def view_hours():
     hours_worked_by_day = ''
     tutors = {}
-    if 'admin' in current_user.roles :#!= 'mo@prepwithmo.com':
+    is_admin = False
+    for role in current_user.roles:
+        if role.name == 'admin':
+            is_admin = True
+    if is_admin:
         for tutor in AppDBUtil.getTutors():
             tutors.update({tutor.tutor_email:tutor.tutor_first_name+" "+tutor.tutor_last_name})
     if request.method == 'POST':
@@ -227,18 +231,22 @@ def view_hours():
         tutor_email = view_hours_contents.get('tutor',current_user.email)
         hours_worked_by_day = AppDBUtil.getHoursWorked(tutor_email=tutor_email,month=view_hours_contents['month'],year=view_hours_contents['year'])
     #print(hours_worked_by_day)
-    print(tutors)
+    #print(tutors)
     return render_template('view_hours.html', hours_worked_by_day=hours_worked_by_day,tutors=tutors)
 
 @server.route("/view_memos",methods=['GET','POST'])
 @login_required
 def view_memos():
     tutors_emails = []
-    if current_user.email != 'mo@prepwithmo.com':
-        tutors_emails.append(current_user.email)
-    else:
+    is_admin = False
+    for role in current_user.roles:
+        if role.name == 'admin':
+            is_admin = True
+    if is_admin:
         for tutor in AppDBUtil.getTutors():
             tutors_emails.append(tutor.tutor_email)
+    else:
+        tutors_emails.append(current_user.email)
 
     tutors_info = {}
     students_info = {}
