@@ -227,7 +227,7 @@ def view_hours():
         tutor_email = view_hours_contents.get('tutor',current_user.email)
         hours_worked_by_day = AppDBUtil.getHoursWorked(tutor_email=tutor_email,month=view_hours_contents['month'],year=view_hours_contents['year'])
     #print(hours_worked_by_day)
-    #print(tutors)
+    print(tutors)
     return render_template('view_hours.html', hours_worked_by_day=hours_worked_by_day,tutors=tutors)
 
 @server.route("/view_memos",methods=['GET','POST'])
