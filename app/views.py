@@ -172,6 +172,7 @@ def logout():
 def admin_services():
     return render_template('admin_services.html')
 
+@roles_required('admin')
 @server.route('/assign_unassign_tutor',methods=['GET','POST'])
 def assign_unassign_tutor():
     if request.method == 'GET':
