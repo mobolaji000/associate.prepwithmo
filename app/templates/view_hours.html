@@ -23,7 +23,7 @@
   <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
   <h4 class="mb-3">View Hours</h4>
 				<hr class="mb-4" style="height:1px;border:none;color:#333;background-color:#333;width:20%;margin-left:40%;margin-right:10%;">
-		 {% if current_user.has_role('admin') %}
+		 {% if is in('admin', current_user.roles) %}
 		<div class="row" >
 					<div class="col-md-6 mb-3" style="margin-left:25%;margin-right:10%;">
 						<label for="tutor" class="form-label">Tutor</label>
