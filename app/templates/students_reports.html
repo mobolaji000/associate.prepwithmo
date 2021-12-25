@@ -40,7 +40,7 @@
 									<div id="students_feedback" name="students_feedback">
 
 
-											  {% for name in students_data %}
+											  {% for name in students_names_data %}
 										{% set student_email = students_emails_data[loop.index0] %}
 
 <div>{{name}}</div>
@@ -56,7 +56,6 @@
 	<option value='No'>No</option>
 	<option value='N/A'>N/A</option>
 	</select>
-
 
 		<br><br>
 												</div>

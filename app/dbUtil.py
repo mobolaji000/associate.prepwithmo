@@ -136,62 +136,62 @@ class AppDBUtil():
                 return save_students_reports_message,next_page
 
             for key,content in students_reports_contents.items():
-                student_email = key.split('_vensti_')[0]
-                report_type = key.split('_vensti_')[1]
-                if report_type == 'attendance':
-                    statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,attendance=content,day=datetime.datetime.now().date())
-                    statement = statement.on_conflict_do_update(
-                        index_elements=['tutor_email','student_email','day'],
-                        set_=dict(attendance=content)
-                    )
+                if key != 'submit':
+                    student_email = key.split('_vensti_')[0]
+                    report_type = key.split('_vensti_')[1]
+                    if report_type == 'attendance':
+                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,attendance=content,day=datetime.datetime.now().date())
+                        statement = statement.on_conflict_do_update(
+                            index_elements=['tutor_email','student_email','day'],
+                            set_=dict(attendance=content)
+                        )
 
-                    db.session.execute(statement)
-                    cls.executeDBQuery()
+                        db.session.execute(statement)
+                        cls.executeDBQuery()
 
-                if report_type == 'home_work':
+                    if report_type == 'home_work':
 
-                    statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,home_work=content,day=datetime.datetime.now().date())
-                    statement = statement.on_conflict_do_update(
-                        index_elements=['tutor_email','student_email','day'],
-                        set_=dict(home_work=content)
-                    )
+                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,home_work=content,day=datetime.datetime.now().date())
+                        statement = statement.on_conflict_do_update(
+                            index_elements=['tutor_email','student_email','day'],
+                            set_=dict(home_work=content)
+                        )
 
-                    db.session.execute(statement)
-                    cls.executeDBQuery()
+                        db.session.execute(statement)
+                        cls.executeDBQuery()
 
-                if report_type == 'memo_1':
+                    if report_type == 'memo_1':
 
-                    statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_1=content,day=datetime.datetime.now().date())
-                    statement = statement.on_conflict_do_update(
-                        index_elements=['tutor_email','student_email','day'],
-                        set_=dict(memo_1=content)
-                    )
+                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_1=content,day=datetime.datetime.now().date())
+                        statement = statement.on_conflict_do_update(
+                            index_elements=['tutor_email','student_email','day'],
+                            set_=dict(memo_1=content)
+                        )
 
-                    db.session.execute(statement)
-                    cls.executeDBQuery()
+                        db.session.execute(statement)
+                        cls.executeDBQuery()
 
-                if report_type == 'memo_2':
+                    if report_type == 'memo_2':
 
-                    statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_2=content,day=datetime.datetime.now().date())
-                    statement = statement.on_conflict_do_update(
-                        index_elements=['tutor_email','student_email','day'],
-                        set_=dict(memo_2=content)
-                    )
+                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_2=content,day=datetime.datetime.now().date())
+                        statement = statement.on_conflict_do_update(
+                            index_elements=['tutor_email','student_email','day'],
+                            set_=dict(memo_2=content)
+                        )
 
-                    db.session.execute(statement)
-                    cls.executeDBQuery()
+                        db.session.execute(statement)
+                        cls.executeDBQuery()
 
-                if report_type == 'memo_3':
+                    if report_type == 'memo_3':
 
-                    statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_3=content,day=datetime.datetime.now().date())
-                    statement = statement.on_conflict_do_update(
-                        index_elements=['tutor_email','student_email','day'],
-                        set_=dict(memo_3=content)
-                    )
+                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_3=content,day=datetime.datetime.now().date())
+                        statement = statement.on_conflict_do_update(
+                            index_elements=['tutor_email','student_email','day'],
+                            set_=dict(memo_3=content)
+                        )
 
-                    db.session.execute(statement)
-                    cls.executeDBQuery()
-
+                        db.session.execute(statement)
+                        cls.executeDBQuery()
         except Exception as e:
             print(e)
             print(traceback.print_exc())
