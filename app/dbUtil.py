@@ -130,6 +130,9 @@ class AppDBUtil():
             next_page = 'hours'
             existing_submission_by_tutor = StudentsReports.query.filter((StudentsReports.tutor_email == tutor_email) & (StudentsReports.day == datetime.datetime.now().date())).first()
 
+            if not students_reports_contents:
+                save_students_reports_message = 'No report saved. No student has been assigned to you.'
+
             if existing_submission_by_tutor:
                 save_students_reports_message = 'Report not saved. You already made your report submission for today.'
                 next_page = 'associate_services'
@@ -192,8 +195,7 @@ class AppDBUtil():
 
                         db.session.execute(statement)
                         cls.executeDBQuery()
-            else:
-                save_students_reports_message = 'No report saved. No student has been assigned to you.'
+
         except Exception as e:
             print(e)
             print(traceback.print_exc())

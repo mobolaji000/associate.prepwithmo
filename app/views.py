@@ -321,7 +321,6 @@ def start_background_jobs_before_first_request():
     def background_job():
         try:
             print(" background job started")
-
         except Exception as e:
             print("Error in background job")
             print(e)
