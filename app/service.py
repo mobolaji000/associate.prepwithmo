@@ -17,6 +17,7 @@ class SendMessagesToClients():
    def __init__(self):
       pass
 
+   #not needed now; might be needed in future
    @classmethod
    def sendEmail(cls, to_address='mo@vensti.com', message='perfectscoremo', subject='Payment Instructions/Options', type=''):
       SendMessagesToClients.awsInstance.send_email(to_address=to_address, message=message, subject=subject, type=type)
@@ -36,7 +37,6 @@ class SendMessagesToClients():
       conversation = twilioClient.conversations.conversations.create(messaging_service_sid='MG0faa1995ce52477a642163564295650c',friendly_name='DailyReport')
       print("conversation created!")
       print(conversation.sid)
-
 
       twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_projected_address='+19564771274')
       twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+19725847364')
@@ -79,5 +79,11 @@ class CreateMessageAsImage():
             fill = 'red' if content=='No' else 'green' if content=='Yes' else 'yellow' if content=='N/A' else 'black'
             canvas.text((spacing, spacing*counter), key+": "+content, font=font, fill=fill)
             counter+=1
+
+      canvas.text((spacing, (spacing * counter)+5), "Regards,", font=font, fill='black')
+      counter += 1
+      canvas.text((spacing, (spacing * counter) + 5), "Mo", font=font, fill='black')
+      counter += 1
+
       Path("/app/data").mkdir(parents=True, exist_ok=True)
       img.save("/app/data/geeks.jpeg")
