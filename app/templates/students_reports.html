@@ -27,7 +27,7 @@
 
 
 	   <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
-  <h1 class="h3 mb-3 font-weight-normal">Enter Students Reports</h1>
+  <h1 class="h3 mb-3 font-weight-normal"><u>Enter Students Reports</u></h1>
 	     <br>
 	  <br>
 <div class="container-fluid" style="width:65%;">
@@ -43,12 +43,12 @@
 											  {% for name in students_names_data %}
 										{% set student_email = students_emails_data[loop.index0] %}
 
-<div>{{name}}</div>
-<hr class="mb-4" style="height:1px;border:none;color:#333;background-color:#333;width:20%;margin-left:40%;margin-right:10%;">
+<div><u>{{name}}</u></div>
+<!--<hr class="mb-4" style="height:1px;border:none;color:#333;background-color:#333;width:20%;margin-left:40%;margin-right:10%;">-->
 <br>
-										<div class="row " style="width:50%; margin-left:25%;">
+										<div class="row ">
 
-											<div class="col" style="display:inline-block; width:100%; margin-left: 10%;">
+											<div class="col text-center" >
 	<label for={{[student_email,"_vensti_attendance"]|join}}>Attendance</label>
 	<select id={{[student_email,"_vensti_attendance"]|join}} name={{[student_email,"_vensti_attendance"]|join}} class="form-control" required>
 		<option value="" selected disabled hidden></option>
@@ -60,7 +60,7 @@
 		<br><br>
 												</div>
 
-												<div class="col" style="display:inline-block; width:100%; margin-left: 10%;">
+												<div class="col text-center" >
 										<label for={{[student_email,"_vensti_home_work"]|join}}>Homework</label>
 	<select id={{[student_email,"_vensti_home_work"]|join}} name={{[student_email,"_vensti_home_work"]|join}} class="form-control" required/>
 	<option value="" selected disabled hidden></option>
@@ -73,17 +73,17 @@
 										</div>
 
 										<div class="row">
-										<div class="col" style="display:inline-block; width:100%; margin-left: 10%;">
+										<div class="col text-center" >
 	<label for={{[student_email,"_vensti_memo_1"]|join}}>What was tutored today?</label>
 	<textarea  id={{[student_email,"_vensti_memo_1"]|join}}  name={{[student_email,"_vensti_memo_1"]|join}} class="form-control" rows="5" required placeholder="What chapters or concepts did you go over with the student today? Don't just name them. Write a few sentences explaining in detail."></textarea>
 											</div>
 
-											<div class="col" style="display:inline-block; width:100%; margin-left: 10%;">
+											<div class="col text-center" >
 	<label for={{[student_email,"_vensti_memo_2"]|join}}>What should be completed for tomorrow?</label>
 	<textarea  id={{[student_email,"_vensti_memo_2"]|join}} name={{[student_email,"_vensti_memo_2"]|join}} class="form-control" rows="5" required placeholder="What homework or study instructions have you assigned to the student ahead of your next meeting?"></textarea>
 											</div>
 
-											<div class="col" style="display:inline-block; width:100%; margin-left: 10%;">
+											<div class="col text-center" >
 	<label for={{[student_email,"_vensti_memo_3"]|join}}>Any further comments?</label>
 	<textarea  id={{[student_email,"_vensti_memo_3"]|join}} name={{[student_email,"_vensti_memo_3"]|join}} class="form-control" rows="5" required placeholder="Comment on other things you observed e.g tardiness, seriousness etc"></textarea>
 											</div>
@@ -108,7 +108,7 @@
   {% endfor %}
 									</div>
 
-									<br><input id="submit" name="submit" class="btn btn-primary btn-lg btn-block" type="submit" value="Submit" style="width:25%; margin-left: 40%;">
+									<br><input id="submit" name="submit" class="btn btn-primary btn-lg btn-block  text-center" type="submit" value="Submit">
 								</form>
 							</div>
 		  </div>
