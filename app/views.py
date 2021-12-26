@@ -155,13 +155,13 @@ def submit_hours():
 #     return render_template('login.html',next_page=next_page)
 
 
-@server.route('/logout', methods=['GET'])
-@login_required
-def logout():
-    user = current_user
-    AppDBUtil.logoutUserInDB(user)
-    logout_user()
-    return redirect('login')
+# @server.route('/logout', methods=['GET'])
+# @login_required
+# def logout():
+#     user = current_user
+#     AppDBUtil.logoutUserInDB(user)
+#     logout_user()
+#     return redirect('user/sign-in')
 
 @server.route('/admin_services',methods=['GET','POST'])
 @roles_required('admin')

@@ -17,20 +17,20 @@ class AppDBUtil():
     def __init__(self):
         pass
 
-    @classmethod
-    def loginUserInDB(cls, tutor=None, enter_password=None):
-        if enter_password:
-            tutor.tutor_password_hash = generate_password_hash(enter_password)
-        tutor.is_tutor_authenticated = True
-        db.session.add(tutor)
-        cls.executeDBQuery()
-        return tutor
+    # @classmethod
+    # def loginUserInDB(cls, tutor=None, enter_password=None):
+    #     if enter_password:
+    #         tutor.tutor_password_hash = generate_password_hash(enter_password)
+    #     tutor.is_tutor_authenticated = True
+    #     db.session.add(tutor)
+    #     cls.executeDBQuery()
+    #     return tutor
 
-    @classmethod
-    def logoutUserInDB(cls, tutor=None):
-        tutor.is_tutor_authenticated = False
-        db.session.add(tutor)
-        cls.executeDBQuery()
+    # @classmethod
+    # def logoutUserInDB(cls, tutor=None):
+    #     tutor.is_tutor_authenticated = False
+    #     db.session.add(tutor)
+    #     cls.executeDBQuery()
 
     @classmethod
     def submitHoursWorked(cls, tutor_email = None, day=None, hours=None, memo=None):
