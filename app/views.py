@@ -77,7 +77,7 @@ def health():
 
 @server.route("/hours",methods=['GET','POST'])
 @login_required
-def hours():
+def hours(allow=None):
     print(str(request.referrer))
     if str(request.referrer).split("/")[-1] == "students_reports":
         return render_template('hours.html')
@@ -215,7 +215,7 @@ def students_reports():
         students_reports_contents = request.form.to_dict()
         save_students_reports_message,next_page = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
         flash(save_students_reports_message)
-        return redirect(next_page)
+        return redirect(url_for(next_page))
 
 @server.route('/view_hours', methods=['GET','POST'])
 @login_required
