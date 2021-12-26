@@ -18,10 +18,10 @@
 
 
 	   <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
-  <h1 class="h3 mb-3 font-weight-normal">Admin Services</h1>
+  <h1 class="h3 mb-3 font-weight-normal"><u>Admin Services</u></h1>
 	     <br>
 
-	  <div>
+	  <div class="container text-center">
 
 	   <div style="display:inline-block; width:25%; margin-right: 5%;"><a class="btn btn-primary btn-lg btn-block " href="/assign_unassign_tutor" role="button">Assign Tutor</a></div>
 
@@ -31,9 +31,7 @@
 
 		  </div>
 
-	  <br> <br> <br> <br> <br>
-
-		   <div class="container"><a class="link-primary" href="/logout">Logout</a></div>
+	 <br>	  <div class="container text-center"><a class="link-primary" href="/logout">Logout</a></div>
 
     {% for message in get_flashed_messages() %}
     <div class="alert alert-warning w-50 p-3">
@@ -41,6 +39,10 @@
         {{ message }}
     </div>
     {% endfor %}
+
+	  <br><br>
+		<p class="mt-5 mb-3 text-muted">&copy; 2017-2022</p>
+	  br><br><br>
 
   </div>
 
