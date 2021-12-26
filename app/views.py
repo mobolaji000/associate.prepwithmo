@@ -304,9 +304,9 @@ def view_memos():
     print(tutors_info)
     return render_template('view_memos.html', tutors_info=json.dumps(tutors_info), students_info=json.dumps(students_info), students_reports=students_reports, is_admin=is_admin)
 
-# @login_manager.user_loader
-# def load_user(tutor_email):
-#     return Tutor.query.get(tutor_email)
+@login_manager.user_loader
+def load_user(email):
+    return User.query.get(email)
 
 #trigger
 @server.before_first_request
