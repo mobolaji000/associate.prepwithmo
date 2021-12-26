@@ -94,7 +94,7 @@ class AWSInstance():
                 <body>
                   <span>Dear parent, </span><br><br>""" \
                     + """<span>Thank you for signing up with us! </span><br><br>""" \
-                    + """<span>Regular communication between us, you, and your student is a big part of our process. </span><br>""" \
+                    + """<span>Regular communication between us, you, and your student is a big part of our process. </span>""" \
                     + """<span>To help further that, please go to <strong><a href='"""+link_url+"""'>"""+link_url+"""</a></strong> (also sent to your phone number) to input you and your student's information.</span><br>""" \
                     + """<span>This will be used to setup text message and email updates on your student's regular progress.</span><br>""" \
                     + """
