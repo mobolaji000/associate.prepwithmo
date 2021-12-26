@@ -95,73 +95,6 @@ def submit_hours():
     flash(submit_hours_worked_message)
     return redirect(url_for('hours'))
 
-# @server.route("/create_password",methods=['GET','POST'])
-# def create_password():
-#     return render_template('create_password.html')
-
-
-# @server.route('/validate_created_password', methods=['POST'])
-# def validate_created_password():
-#     enter_password = request.form.to_dict()['enter_password']
-#     re_enter_password = request.form.to_dict()['re_enter_password']
-#     email = request.form.to_dict()['email']
-#     tutor = Tutor.query.filter_by(tutor_email=email).first()
-#
-#     if tutor and enter_password == re_enter_password:
-#         tutor = AppDBUtil.loginUserInDB(tutor, enter_password)
-#         login_user(tutor, remember=True)
-#         if tutor.tutor_email == "mo@prepwithmo.com":
-#             return redirect(url_for('admin_services'))
-#         else:
-#             return redirect(url_for('associate_services'))
-#     else:
-#         flash('Passwords do not match or unregistered user')
-#         return render_template('create_password.html', email=email)
-
-# @server.route('/validate_login', methods=['GET','POST'])
-# def validate_login():
-#     login_form_contents = request.form.to_dict()
-#     next_page = login_form_contents.get('next_page')
-#
-#
-#     email = login_form_contents['email']
-#     password = login_form_contents['password']
-#     tutor = Tutor.query.filter_by(tutor_email=email).first()
-#
-#     if tutor is None or password is None or not tutor.check_password(password):
-#         flash('Invalid username/password or unregistered user')
-#         return redirect(url_for('login'))
-#
-#     if tutor.check_password("prepwithmo"):
-#         return render_template('create_password.html', email=email)
-#
-#     if tutor.tutor_email == "mo@prepwithmo.com":
-#         if tutor.check_password(password):
-#             return redirect(url_for('admin_services'))
-#         else:
-#             flash('Invalid admin login')
-#             return redirect(url_for('login'))
-#
-#     if current_user.is_authenticated:
-#         return redirect(url_for('associate_services'))
-#
-#
-#     tutor = AppDBUtil.loginUserInDB(tutor)
-#     login_user(tutor, remember=True)
-#
-#     if not next_page or url_parse(next_page).netloc != '':
-#         next_page = url_for('associate_services')
-#         #print(url_for('associate_services'))
-#
-#     #print("next_page is ", next_page)
-#     return redirect(next_page)
-
-
-# @server.route('/login', methods=['GET', 'POST'])
-# def login():
-#     next_page = request.args.get('next')
-#     return render_template('login.html',next_page=next_page)
-
 
 @server.route('/logout', methods=['GET'])
 @login_required
@@ -216,6 +149,10 @@ def students_reports():
         save_students_reports_message,next_page = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
         flash(save_students_reports_message)
         return redirect(url_for(next_page))
+        # if next_page == 'hours':
+        #     return render_template('hours.html')
+        # else:
+        #     return redirect(next_page)
 
 @server.route('/view_hours', methods=['GET','POST'])
 @login_required
