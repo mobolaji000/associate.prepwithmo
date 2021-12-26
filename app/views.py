@@ -155,13 +155,13 @@ def submit_hours():
 #     return render_template('login.html',next_page=next_page)
 
 
-# @server.route('/logout', methods=['GET'])
-# @login_required
-# def logout():
-#     user = current_user
-#     AppDBUtil.logoutUserInDB(user)
-#     logout_user()
-#     return redirect('user/sign-in')
+@server.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    user = current_user
+    #AppDBUtil.logoutUserInDB(user)
+    logout_user()
+    return redirect('user/sign-in')
 
 @server.route('/admin_services',methods=['GET','POST'])
 @roles_required('admin')
@@ -281,6 +281,11 @@ def view_memos():
             print(all_students_reports_to_send)
             for key,content in all_students_reports_to_send.items():
                 if content.get('send_report','') == 'send':
+                    memos,not_memos = {},{}
+                    for k,v in content.items():
+                        if k.startswith('memo_1'):
+                            memos.update("":v)
+
                     memos = {k:v for k, v in content.items() if k.startswith('memo')}
                     not_memos = {k:v for k, v in content.items() if not (k.startswith('memo') or k.startswith('send'))}
                     student = AppDBUtil.getStudentByEmail(key)

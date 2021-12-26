@@ -107,11 +107,11 @@
 						 {% if students_reports is mapping %}
 
   {% for date, reports in students_reports.items() %}
-  <h3 class="mb-3">{{date}}</h3><br><br>
+  <h3 class="mb-3"><u>{{date}}</u></h3><br><br>
 
  {% for student_email, student_report in reports.items() %}
 						<div container>
-						   <h2 class="mb-3">{{student_report[0]}}</h2><br>
+						   <h2 class="mb-3"><u>{{student_report[0]}}</u></h2><br>
 						<table class="table">
   <thead class="thead-dark">
     <tr>
@@ -120,7 +120,7 @@
     </tr>
   </thead>
   <tbody>
-
+	<input id={{[student_email,"_vensti_report_date"]|join}} name={{[student_email,"_vensti_report_date"]|join}} hidden value="{{ date }}">
     <tr>
       <th scope="row">Attendance</th>
 		<td><textarea  id={{[student_email,"_vensti_attendance"]|join}}  name={{[student_email,"_vensti_attendance"]|join}} class="form-control" rows="1" >{{student_report[1]}}</textarea></td>

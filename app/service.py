@@ -71,7 +71,9 @@ class CreateMessageAsImage():
       img = Image.new('RGB', (200, 100), color='White')
       canvas = ImageDraw.Draw(img)
       font = ImageFont.truetype('/app/data/Noto_Sans/NotoSans-Bold.ttf', size=15)
-      counter = 1
+
+      canvas.text((spacing, spacing ), "Report for {}".format(), font=font, fill='black')
+      counter = 2
       for key,content in textToWrite.items():
          fill = 'red' if content=='No' else 'green' if content=='Yes' else 'yellow' if content=='N/A' else 'black'
          canvas.text((spacing, spacing*counter), key+": "+content, font=font, fill=fill)
