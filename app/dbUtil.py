@@ -192,6 +192,8 @@ class AppDBUtil():
 
                         db.session.execute(statement)
                         cls.executeDBQuery()
+            else:
+                save_students_reports_message = 'No report saved. No student has been assigned to you.'
         except Exception as e:
             print(e)
             print(traceback.print_exc())
