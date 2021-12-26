@@ -54,7 +54,14 @@ server.logger.setLevel(logging.DEBUG)
 
 @server.route("/")
 def root_route():
-    return redirect(url_for('associate_services'))
+    is_admin = False
+    for role in current_user.roles:
+        if role.name == 'admin':
+            is_admin = True
+    if is_admin:
+        return redirect(url_for('admin_services'))
+    else:
+        return redirect(url_for('associate_services'))
 
 
 @server.route("/associate_services",methods=['GET'])
