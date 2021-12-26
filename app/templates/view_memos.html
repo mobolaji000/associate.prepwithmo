@@ -32,14 +32,13 @@
       <div class="col-md-8 order-md-1">
     <form class="form-signin" method="post" action="{{ url_for('view_memos') }}">
   <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
-  <h4 class="mb-3">View Memos</h4>
+  <h4 class="mb-3"><u>View Memos</u></h4>
 		{% set ns = namespace(is_admin=false) %}
 		{% for role in current_user.roles %}
 		 {% if 'admin' in role.name %}
 							{% set ns.is_admin = true %}
 		 {% endif %}
 						  {% endfor %}
-				<hr class="mb-4" style="height:1px;border:none;color:#333;background-color:#333;width:20%;margin-left:40%;margin-right:10%;">
 		 {% if ns.is_admin %}
 		<div class="row" >
 					<div class="col-md-6 mb-3" >
@@ -171,6 +170,8 @@
 </form>
       </div>
 	  <br><br><br>
+
+	  <div class="container text-center"><a class="link-primary" href="/logout">Logout</a></div>
 
 	  <input id="is_admin" name="is_admin" hidden data-is_admin="{{ is_admin }}">
 	   <input id="tutors_info" name="tutors_info" hidden data-tutors_info="{{ tutors_info }}">
