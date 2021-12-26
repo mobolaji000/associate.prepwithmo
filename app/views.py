@@ -284,10 +284,18 @@ def view_memos():
                     memos,not_memos = {},{}
                     for k,v in content.items():
                         if k.startswith('memo_1'):
-                            memos.update("":v)
-
-                    memos = {k:v for k, v in content.items() if k.startswith('memo')}
-                    not_memos = {k:v for k, v in content.items() if not (k.startswith('memo') or k.startswith('send'))}
+                            memo_key = "Topics covered today ({})".format(content.get('report_date',''))
+                            memos.update({memo_key:v})
+                        elif k.startswith('memo_2'):
+                            memo_key = "Howework assigned today ({})".format(content.get('report_date',''))
+                            memos.update({memo_key:v})
+                        elif k.startswith('memo_3'):
+                            memo_key = "Miscellanous comments ({})".format(content.get('report_date',''))
+                            memos.update({memo_key:v})
+                        else:
+                            not_memos.update({k: v})
+                    # memos = {k:v for k, v in content.items() if k.startswith('memo')}
+                    # not_memos = {k:v for k, v in content.items() if not (k.startswith('memo') or k.startswith('send'))}
                     student = AppDBUtil.getStudentByEmail(key)
                     SendMessagesToClients.sendSMS(to_numbers=[student['parent_1_phone_number'],student['parent_2_phone_number'],student['student_phone_number']],message_as_text=memos,message_as_image=not_memos)
 

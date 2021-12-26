@@ -71,15 +71,13 @@ class CreateMessageAsImage():
       img = Image.new('RGB', (200, 100), color='White')
       canvas = ImageDraw.Draw(img)
       font = ImageFont.truetype('/app/data/Noto_Sans/NotoSans-Bold.ttf', size=15)
-
-      canvas.text((spacing, spacing ), "Report for {}".format(), font=font, fill='black')
+      canvas.text((spacing, spacing), "Report for today ({})".format(textToWrite.get('report_date','')), font=font, fill='black')
+      canvas.line((spacing, spacing+2, spacing + 50, spacing+2),  fill='black')
       counter = 2
       for key,content in textToWrite.items():
-         fill = 'red' if content=='No' else 'green' if content=='Yes' else 'yellow' if content=='N/A' else 'black'
-         canvas.text((spacing, spacing*counter), key+": "+content, font=font, fill=fill)
-         counter+=1
+         if key != 'report_date':
+            fill = 'red' if content=='No' else 'green' if content=='Yes' else 'yellow' if content=='N/A' else 'black'
+            canvas.text((spacing, spacing*counter), key+": "+content, font=font, fill=fill)
+            counter+=1
       Path("/app/data").mkdir(parents=True, exist_ok=True)
       img.save("/app/data/geeks.jpeg")
-
-      googleCredentials = GoogleInstance.getGoogleCredentials()
-      GoogleInstance.getFilesFromGoogleDrive(googleCredentials)
