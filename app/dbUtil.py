@@ -133,6 +133,7 @@ class AppDBUtil():
             if not students_reports_contents:
                 save_students_reports_message = 'No report saved. No student has been assigned to you.'
                 next_page = 'associate_services'
+                return save_students_reports_message, next_page
 
             if existing_submission_by_tutor:
                 save_students_reports_message = 'Report not saved. You already made your report submission for today.'

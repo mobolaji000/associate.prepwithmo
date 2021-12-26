@@ -78,6 +78,7 @@ def health():
 @server.route("/hours",methods=['GET','POST'])
 @login_required
 def hours():
+    print(str(request.referrer))
     if str(request.referrer).split("/")[-1] == "students_reports":
         return render_template('hours.html')
     else:
