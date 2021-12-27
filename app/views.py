@@ -78,6 +78,8 @@ def health():
 @server.route("/hours",methods=['GET','POST'])
 @login_required
 def hours(allow=None):
+    print("next is ",str(request.args.get('next')))
+
     keys = ['HTTP_ACCEPT', 'HTTP_ACCEPT_ENCODING',
             'HTTP_X_FORWARDED_FOR', 'HTTP_REFERER',
             'HTTP_USER_AGENT', 'PATH_INFO',
@@ -155,6 +157,13 @@ def students_reports():
         save_students_reports_message,next_page = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
         flash(save_students_reports_message)
         if next_page == 'hours':
+            # response = make_response(render_template('transaction_details.html')
+            # response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"  # HTTP 1.1.
+            # response.headers["Pragma"] = "no-cache"  # HTTP 1.0.
+            # response.headers["Expires"] = "0"  # Proxies.
+            #
+            # return response
+
             return redirect(url_for(next_page,allow=True))
         else:
             return redirect(next_page)
