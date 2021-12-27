@@ -53,6 +53,7 @@ server.config.from_object(Config)
 server.logger.setLevel(logging.DEBUG)
 
 @server.route("/")
+@login_required
 def root_route():
     is_admin = False
     for role in current_user.roles:
@@ -99,8 +100,9 @@ def logout():
 def admin_services():
     return render_template('admin_services.html')
 
-@roles_required('admin')
+
 @server.route('/assign_unassign_tutor',methods=['GET','POST'])
+@roles_required('admin')
 def assign_unassign_tutor():
     if request.method == 'GET':
         tutors_data,students_data = [],[]
@@ -123,6 +125,7 @@ def assign_unassign_tutor():
         return redirect('assign_unassign_tutor')
 
 @server.route('/students_reports',methods=['GET','POST'])
+@login_required
 def students_reports():
     if request.method == 'GET':
         students_names_data, students_emails_data, students_ids_data = [], [], []
