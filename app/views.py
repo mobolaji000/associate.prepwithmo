@@ -143,7 +143,7 @@ def students_reports():
         if next_page == 'hours':
             if submitted_successfully:
                 flash(save_students_reports_message)
-                return render_template('hours.html')
+                return render_template('enter_hours.html')
             else:
                 next_page = 'students_reports'
                 save_students_reports_message = 'Weird. Cannot submit hours without submitting reports. Contact Mo.'
@@ -228,20 +228,21 @@ def view_memos():
                     memos,not_memos = {},{}
                     for k,v in content.items():
                         if k.startswith('memo_1'):
-                            memo_key = "Topics covered today ({})".format(content.get('report_date',''))
+                            memo_key = "Topics covered on {}".format(content.get('report_date',''))
                             memos.update({memo_key:v})
                         elif k.startswith('memo_2'):
-                            memo_key = "Howework assigned today ({})".format(content.get('report_date',''))
+                            memo_key = "Howework assigned on {}".format(content.get('report_date',''))
                             memos.update({memo_key:v})
                         elif k.startswith('memo_3'):
-                            memo_key = "Miscellanous comments ({})".format(content.get('report_date',''))
+                            memo_key = "Miscellanous comments on {}".format(content.get('report_date',''))
                             memos.update({memo_key:v})
                         else:
                             not_memos.update({k: v})
                     # memos = {k:v for k, v in content.items() if k.startswith('memo')}
                     # not_memos = {k:v for k, v in content.items() if not (k.startswith('memo') or k.startswith('send'))}
                     student = AppDBUtil.getStudentByEmail(key)
-                    SendMessagesToClients.sendSMS(to_numbers=[student['parent_1_phone_number'],student['parent_2_phone_number'],student['student_phone_number']],message_as_text=memos,message_as_image=not_memos)
+                    to_numbers = [number for number in [student.get('parent_1_phone_number',None),student.get('parent_1_phone_number',None),student.get('student_phone_number',None)] if number]
+                    SendMessagesToClients.sendSMS(to_numbers=to_numbers,message_as_text=memos,message_as_image=not_memos)
 
         print(view_memos_contents)
         print(students_info)
