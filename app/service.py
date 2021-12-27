@@ -1,5 +1,5 @@
 from app.aws import AWSInstance
-from app.google import GoogleInstance
+import time
 import ssl
 from twilio.rest import Client as TwilioClient
 from pathlib import Path
@@ -46,12 +46,15 @@ class SendMessagesToClients():
          twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+1'+to_number)
 
       CreateMessageAsImage.writeTextAsImage(message_as_image)
+      message_as_text_to_send = ''
       for k, v in message_as_text.items():
-         message_as_text_to_send = "\n"+k+": \n"+v
+         message_as_text_to_send = message_as_text_to_send + "\n\n"+k+": \n\n"+v+"\n\n"
 
       media_sid = CreateMessageAsImage.uploadMessageImage(account_sid,auth_token,conversation.chat_service_sid)
-      twilioClient.conversations.conversations(conversation.sid).messages.create(body=message_as_text_to_send,media_sid=media_sid,author='+19564771274')
-      print("text sent!")
+      twilioClient.conversations.conversations(conversation.sid).messages.create(media_sid=media_sid,author='+19564771274')
+      time.sleep(1) # wait before next send to help ensure order
+      twilioClient.conversations.conversations(conversation.sid).messages.create(body=message_as_text_to_send, author='+19564771274')
+      print("texts sent!")
 
 class CreateMessageAsImage():
    @classmethod
@@ -69,19 +72,21 @@ class CreateMessageAsImage():
    @classmethod
    def writeTextAsImage(cls, textToWrite=None):
       spacing = 25
-      img = Image.new('RGB', (200, 100), color='White')
+      img = Image.new('RGB', (400, 200), color='White')
       canvas = ImageDraw.Draw(img)
       font = ImageFont.truetype('/app/data/Noto_Sans/NotoSans-Bold.ttf', size=15)
-      canvas.text((spacing, spacing), "Report for today ({})".format(textToWrite.get('report_date','')), font=font, fill='black')
-      canvas.line((spacing, spacing+2, spacing + 50, spacing+2),  fill='black')
+      canvas.text((spacing, spacing), "Report for {}".format(textToWrite.get('report_date','')), font=font, fill='black')
+      canvas.line((spacing, spacing+20, spacing + 160, spacing+20),  fill='black')
       counter = 2
       for key,content in textToWrite.items():
-         if key != 'report_date':
+         if key != 'report_date' and key != 'send_report':
             fill = 'red' if content=='No' else 'green' if content=='Yes' else 'yellow' if content=='N/A' else 'black'
             canvas.text((spacing, spacing*counter), key+": "+content, font=font, fill=fill)
             counter+=1
 
-      canvas.text((spacing, (spacing * counter)+5), "Regards,", font=font, fill='black')
+      # canvas.line((spacing, (spacing * counter) + 20, spacing + 450, (spacing * counter) + 20), fill='black')
+      # counter += 1
+      canvas.text((spacing, (spacing * counter)+15), "Regards,", font=font, fill='black')
       counter += 1
       canvas.text((spacing, (spacing * counter) + 5), "Mo", font=font, fill='black')
       counter += 1
