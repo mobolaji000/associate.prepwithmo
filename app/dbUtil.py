@@ -133,12 +133,12 @@ class AppDBUtil():
             if not students_reports_contents:
                 save_students_reports_message = 'No report saved. No student has been assigned to you.'
                 next_page = 'associate_services'
-                return save_students_reports_message, next_page
+                return save_students_reports_message, next_page,existing_submission_by_tutor
 
             if existing_submission_by_tutor:
                 save_students_reports_message = 'Report not saved. You already made your report submission for today.'
                 next_page = 'associate_services'
-                return save_students_reports_message,next_page
+                return save_students_reports_message,next_page,existing_submission_by_tutor
 
             for key,content in students_reports_contents.items():
                 if key != 'submit':
@@ -204,7 +204,7 @@ class AppDBUtil():
             save_students_reports_message = 'Error saving students reports. Contact Mo.'
             next_page = 'students_reports'
         finally:
-            return save_students_reports_message,next_page
+            return save_students_reports_message,next_page,existing_submission_by_tutor
 
     @classmethod
     def getStudentsReports(cls, student_email=None, tutor_email=None, start_date=None, end_date=None):

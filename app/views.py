@@ -75,24 +75,6 @@ def health():
     print("healthy!")
     return render_template('health.html')
 
-@server.route("/hours",methods=['GET','POST'])
-@login_required
-def hours(allow=None):
-    print("next is ",str(request.args.get('next')))
-
-    keys = ['HTTP_ACCEPT', 'HTTP_ACCEPT_ENCODING',
-            'HTTP_X_FORWARDED_FOR', 'HTTP_REFERER',
-            'HTTP_USER_AGENT', 'PATH_INFO',
-            'QUERY_STRING', 'REMOTE_ADDR']
-    dumpable = {k: request.environ.get(k, None) for k in keys}
-    print(json.dumps(dumpable))
-
-    if allow:
-        return render_template('hours.html')
-    else:
-        return redirect(url_for('associate_services'))
-
-
 @server.route("/submit_hours",methods=['GET','POST'])
 @login_required
 def submit_hours():
@@ -154,19 +136,19 @@ def students_reports():
         return render_template('students_reports.html',students_names_data=students_names_data,students_ids_data=students_ids_data,students_emails_data=students_emails_data)
     elif request.method == 'POST':
         students_reports_contents = request.form.to_dict()
-        save_students_reports_message,next_page = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
-        flash(save_students_reports_message)
+        save_students_reports_message,next_page,existing_submission_by_tutor = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
         if next_page == 'hours':
-            # response = make_response(render_template('transaction_details.html')
-            # response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"  # HTTP 1.1.
-            # response.headers["Pragma"] = "no-cache"  # HTTP 1.0.
-            # response.headers["Expires"] = "0"  # Proxies.
-            #
-            # return response
-
-            return redirect(url_for(next_page,allow=True))
+            if existing_submission_by_tutor:
+                flash(save_students_reports_message)
+                return render_template('hours.html')
+            else:
+                next_page = 'students_reports'
+                save_students_reports_message = 'Weird. Cannot submit hours without submitting reports. Contact Mo.'
+                flash(save_students_reports_message)
+                return redirect(url_for(next_page))
         else:
-            return redirect(next_page)
+            flash(save_students_reports_message)
+            return redirect(url_for(next_page))
 
 @server.route('/view_hours', methods=['GET','POST'])
 @login_required
