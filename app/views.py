@@ -177,78 +177,87 @@ def view_hours():
 @server.route("/view_memos",methods=['GET','POST'])
 @login_required
 def view_memos():
-    tutors_emails = []
-    is_admin = False
-    for role in current_user.roles:
-        if role.name == 'admin':
-            is_admin = True
-    if is_admin:
-        for tutor in AppDBUtil.getTutors():
-            tutors_emails.append(tutor.tutor_email)
-    else:
-        tutors_emails.append(current_user.email)
+    try:
+        tutors_emails = []
+        is_admin = False
+        for role in current_user.roles:
+            if role.name == 'admin':
+                is_admin = True
+        if is_admin:
+            for tutor in AppDBUtil.getTutors():
+                tutors_emails.append(tutor.tutor_email)
+        else:
+            tutors_emails.append(current_user.email)
 
-    tutors_info = {}
-    students_info = {}
-    students_reports = ''
-    for email in tutors_emails:
-        tutor_students_assignments = AppDBUtil.getTutorStudentsAssignment(email)
+        tutors_info = {}
+        students_info = {}
+        students_reports = ''
+        for email in tutors_emails:
+            tutor_students_assignments = AppDBUtil.getTutorStudentsAssignment(email)
 
-        for assignment in tutor_students_assignments:
-            students_info.update({assignment.student_email:assignment.student_first_name+" "+assignment.student_last_name})
-            tutors_info.update({assignment.tutor_email:assignment.tutor_first_name+" "+assignment.tutor_last_name})
+            for assignment in tutor_students_assignments:
+                students_info.update({assignment.student_email:assignment.student_first_name+" "+assignment.student_last_name})
+                tutors_info.update({assignment.tutor_email:assignment.tutor_first_name+" "+assignment.tutor_last_name})
 
-    if request.method == 'POST':
-        view_memos_contents = request.form.to_dict()
-        if  view_memos_contents['submit'] == "View":
-            students_reports = {}
-            if view_memos_contents['search_by_tutor_or_student'] == 'search_by_tutor':
-                existing_submission_by_tutor = AppDBUtil.getStudentsReports(tutor_email=view_memos_contents['tutor_or_student_list'],start_date=view_memos_contents['start_date'],end_date=view_memos_contents['end_date'])
-            elif view_memos_contents['search_by_tutor_or_student'] == 'search_by_student':
-                existing_submission_by_tutor = AppDBUtil.getStudentsReports(student_email=view_memos_contents['tutor_or_student_list'],start_date=view_memos_contents['start_date'],end_date=view_memos_contents['end_date'])
+        if request.method == 'POST':
+            view_memos_contents = request.form.to_dict()
+            if  view_memos_contents['submit'] == "View":
+                students_reports = {}
+                if view_memos_contents['search_by_tutor_or_student'] == 'search_by_tutor':
+                    existing_submission_by_tutor = AppDBUtil.getStudentsReports(tutor_email=view_memos_contents['tutor_or_student_list'],start_date=view_memos_contents['start_date'],end_date=view_memos_contents['end_date'])
+                elif view_memos_contents['search_by_tutor_or_student'] == 'search_by_student':
+                    existing_submission_by_tutor = AppDBUtil.getStudentsReports(student_email=view_memos_contents['tutor_or_student_list'],start_date=view_memos_contents['start_date'],end_date=view_memos_contents['end_date'])
 
-            for report in existing_submission_by_tutor:
-                report_by_day = students_reports.get(report.day.strftime('%m/%d/%Y'), {})
-                student = AppDBUtil.getStudentByEmail(report.student_email)
-                report_by_day.update({report.student_email: [student.student_first_name+" "+student.student_last_name,report.attendance, report.home_work, report.memo_1, report.memo_2, report.memo_3]})
-                students_reports.update({report.day.strftime('%m/%d/%Y'):report_by_day})
+                for report in existing_submission_by_tutor:
+                    report_by_day = students_reports.get(report.day.strftime('%m/%d/%Y'), {})
+                    student = AppDBUtil.getStudentByEmail(report.student_email)
+                    report_by_day.update({report.student_email: [student.student_first_name+" "+student.student_last_name,report.attendance, report.home_work, report.memo_1, report.memo_2, report.memo_3]})
+                    students_reports.update({report.day.strftime('%m/%d/%Y'):report_by_day})
 
-        elif  view_memos_contents['submit'] == "Send":
-            all_students_reports_to_send = {}
-            for key,content in view_memos_contents.items():
-                if len(key.split('_vensti_')) > 1:
-                    student_email = key.split('_vensti_')[0]
-                    report_type = key.split('_vensti_')[1]
-                    this_student_report_to_send = all_students_reports_to_send.get(student_email,{})
-                    this_student_report_to_send.update({report_type:content})
-                    all_students_reports_to_send.update({student_email:this_student_report_to_send})
+            elif  view_memos_contents['submit'] == "Send":
+                all_students_reports_to_send = {}
+                for key,content in view_memos_contents.items():
+                    if len(key.split('_vensti_')) > 1:
+                        student_email = key.split('_vensti_')[0]
+                        report_type = key.split('_vensti_')[1]
+                        this_student_report_to_send = all_students_reports_to_send.get(student_email,{})
+                        this_student_report_to_send.update({report_type:content})
+                        all_students_reports_to_send.update({student_email:this_student_report_to_send})
 
-            print(all_students_reports_to_send)
-            for key,content in all_students_reports_to_send.items():
-                if content.get('send_report','') == 'send':
-                    memos,not_memos = {},{}
-                    for k,v in content.items():
-                        if k.startswith('memo_1'):
-                            memo_key = "Topics covered on {}".format(content.get('report_date',''))
-                            memos.update({memo_key:v})
-                        elif k.startswith('memo_2'):
-                            memo_key = "Howework assigned on {}".format(content.get('report_date',''))
-                            memos.update({memo_key:v})
-                        elif k.startswith('memo_3'):
-                            memo_key = "Miscellanous comments on {}".format(content.get('report_date',''))
-                            memos.update({memo_key:v})
-                        else:
-                            not_memos.update({k: v})
-                    # memos = {k:v for k, v in content.items() if k.startswith('memo')}
-                    # not_memos = {k:v for k, v in content.items() if not (k.startswith('memo') or k.startswith('send'))}
-                    student = AppDBUtil.getStudentByEmail(key)
-                    to_numbers = [number for number in [student['parent_1_phone_number'],student['parent_1_phone_number'],student['student_phone_number']] if number != '']
-                    SendMessagesToClients.sendSMS(to_numbers=to_numbers,message_as_text=memos,message_as_image=not_memos)
+                print(all_students_reports_to_send)
+                for key,content in all_students_reports_to_send.items():
+                    if content.get('send_report','') == 'send':
+                        memos,not_memos = {},{}
+                        for k,v in content.items():
+                            if k.startswith('memo_1'):
+                                memo_key = "Topics covered on {}".format(content.get('report_date',''))
+                                memos.update({memo_key:v})
+                            elif k.startswith('memo_2'):
+                                memo_key = "Howework assigned on {}".format(content.get('report_date',''))
+                                memos.update({memo_key:v})
+                            elif k.startswith('memo_3'):
+                                memo_key = "Miscellanous comments on {}".format(content.get('report_date',''))
+                                memos.update({memo_key:v})
+                            else:
+                                not_memos.update({k: v})
+                        # memos = {k:v for k, v in content.items() if k.startswith('memo')}
+                        # not_memos = {k:v for k, v in content.items() if not (k.startswith('memo') or k.startswith('send'))}
+                        student = AppDBUtil.getStudentByEmail(key)
+                        to_numbers = [number for number in [student['parent_1_phone_number'],student['parent_1_phone_number'],student['student_phone_number']] if number != '']
+                        SendMessagesToClients.sendSMS(to_numbers=to_numbers,message_as_text=memos,message_as_image=not_memos)
+                        flash("Report successfully sent.")
 
-        print(view_memos_contents)
-        print(students_info)
-        print(tutors_info)
-    return render_template('view_memos.html', tutors_info=json.dumps(tutors_info), students_info=json.dumps(students_info), students_reports=students_reports, is_admin=is_admin)
+            print(view_memos_contents)
+            print(students_info)
+            print(tutors_info)
+
+    except Exception as e:
+        flash("Error in viewing or sending reports. Contact Mo.")
+        print(e)
+        traceback.print_exc()
+    finally:
+        return render_template('view_memos.html', tutors_info=json.dumps(tutors_info), students_info=json.dumps(students_info), students_reports=students_reports, is_admin=is_admin)
+
 
 @login_manager.user_loader
 def load_user(email):
