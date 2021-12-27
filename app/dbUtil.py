@@ -128,17 +128,18 @@ class AppDBUtil():
         try:
             save_students_reports_message = 'Students reports successfully saved.'
             next_page = 'hours'
+            submitted_successfully = False
             existing_submission_by_tutor = StudentsReports.query.filter((StudentsReports.tutor_email == tutor_email) & (StudentsReports.day == datetime.datetime.now().date())).first()
 
             if not students_reports_contents:
                 save_students_reports_message = 'No report saved. No student has been assigned to you.'
                 next_page = 'associate_services'
-                return save_students_reports_message, next_page,existing_submission_by_tutor
+                return save_students_reports_message, next_page,submitted_successfully
 
             if existing_submission_by_tutor:
                 save_students_reports_message = 'Report not saved. You already made your report submission for today.'
                 next_page = 'associate_services'
-                return save_students_reports_message,next_page,existing_submission_by_tutor
+                return save_students_reports_message,next_page,submitted_successfully
 
             for key,content in students_reports_contents.items():
                 if key != 'submit':
@@ -197,6 +198,7 @@ class AppDBUtil():
 
                         db.session.execute(statement)
                         cls.executeDBQuery()
+            submitted_successfully = True
 
         except Exception as e:
             print(e)
@@ -204,7 +206,7 @@ class AppDBUtil():
             save_students_reports_message = 'Error saving students reports. Contact Mo.'
             next_page = 'students_reports'
         finally:
-            return save_students_reports_message,next_page,existing_submission_by_tutor
+            return save_students_reports_message,next_page,submitted_successfully
 
     @classmethod
     def getStudentsReports(cls, student_email=None, tutor_email=None, start_date=None, end_date=None):

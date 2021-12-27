@@ -136,9 +136,9 @@ def students_reports():
         return render_template('students_reports.html',students_names_data=students_names_data,students_ids_data=students_ids_data,students_emails_data=students_emails_data)
     elif request.method == 'POST':
         students_reports_contents = request.form.to_dict()
-        save_students_reports_message,next_page,existing_submission_by_tutor = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
+        save_students_reports_message,next_page,submitted_successfully = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
         if next_page == 'hours':
-            if existing_submission_by_tutor:
+            if submitted_successfully:
                 flash(save_students_reports_message)
                 return render_template('hours.html')
             else:
