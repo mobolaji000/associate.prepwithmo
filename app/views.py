@@ -84,7 +84,8 @@ def submit_hours():
     memo = request.form['memo']
     submit_hours_worked_message = AppDBUtil.submitHoursWorked(tutor_email=current_user.email, day=day, hours=hours, memo=memo)
     flash(submit_hours_worked_message)
-    return redirect(url_for('hours'))
+    return render_template('enter_hours.html')
+    #return redirect(url_for('hours'))
 
 
 @server.route('/logout', methods=['GET'])
