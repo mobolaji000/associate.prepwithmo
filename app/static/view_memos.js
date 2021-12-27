@@ -29,6 +29,7 @@ var today = new Date(new Date().getTime() + offset * 3600 * 1000).toISOString().
         };
 
  $('input[name="search_by_tutor_or_student"]').change(function() {
+         document.getElementById("tutor_or_student_list").innerHTML = "";
         if ($(this).val() == "search_by_tutor") {
             var tutor_or_student_list = $("#tutor_or_student_list");
             var select_options = "";
