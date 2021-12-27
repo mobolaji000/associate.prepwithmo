@@ -78,7 +78,13 @@ def health():
 @server.route("/hours",methods=['GET','POST'])
 @login_required
 def hours(allow=None):
-    #print(str(request.referrer))
+    keys = ['HTTP_ACCEPT', 'HTTP_ACCEPT_ENCODING',
+            'HTTP_X_FORWARDED_FOR', 'HTTP_REFERER',
+            'HTTP_USER_AGENT', 'PATH_INFO',
+            'QUERY_STRING', 'REMOTE_ADDR']
+    dumpable = {k: request.environ.get(k, None) for k in keys}
+    print(json.dumps(dumpable))
+
     if allow:
         return render_template('hours.html')
     else:
