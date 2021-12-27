@@ -242,7 +242,7 @@ def view_memos():
                     # memos = {k:v for k, v in content.items() if k.startswith('memo')}
                     # not_memos = {k:v for k, v in content.items() if not (k.startswith('memo') or k.startswith('send'))}
                     student = AppDBUtil.getStudentByEmail(key)
-                    to_numbers = [number for number in [student.get('parent_1_phone_number',None),student.get('parent_1_phone_number',None),student.get('student_phone_number',None)] if number]
+                    to_numbers = [number for number in [student['parent_1_phone_number'],student['parent_1_phone_number'],student['student_phone_number']] if number != '']
                     SendMessagesToClients.sendSMS(to_numbers=to_numbers,message_as_text=memos,message_as_image=not_memos)
 
         print(view_memos_contents)
