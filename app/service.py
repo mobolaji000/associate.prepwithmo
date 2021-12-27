@@ -42,7 +42,8 @@ class SendMessagesToClients():
       twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+19725847364')
 
       for to_number in to_numbers:
-        twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+1'+to_number)
+         print("to_number is ",to_number)
+         twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+1'+to_number)
 
       CreateMessageAsImage.writeTextAsImage(message_as_image)
       for k, v in message_as_text.items():
