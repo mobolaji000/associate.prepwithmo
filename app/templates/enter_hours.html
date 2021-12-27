@@ -21,11 +21,6 @@
     document.getElementById("day_div").innerHTML = today;
 };
 
-		   function finalCheckBeforeSave()
-      {
-
-      }
-      
       function  finalCheckBeforeSubmit()
       {
       var today = new Date().toLocaleDateString();
@@ -49,10 +44,7 @@
 	  <h4 class="mb-3"><u>Enter Today's Hours</u></h4>
 
 	  <br><br><br>
-
-	  <div>
-
-		  <div style="display:inline-block; width:50%; margin-left: 10%;">
+		  <div class="row justify-content-center">
 								<form action="{{url_for('submit_hours')}}" method="post">
 									<div id="day_div"  name="day_div"></div><br><br>
 									<input id="day"  name="day" class="form-control" hidden/><br><br>
@@ -60,11 +52,10 @@
 									<input id="hours"  name="hours" class="form-control" type="number" min="0"><br><br>
 									<label for=memo>Memo</label>
 									<textarea id="memo"  name="memo" class="form-control" rows="5"></textarea><br><br>
-									<input id="save" name="save" class="btn btn-primary btn-lg btn-block" type="submit" value="Save"
+									<input id="save" name="save" class="btn btn-primary btn-lg btn-block w-25 p-3" type="submit" value="Save"
 										   onclick="finalCheckBeforeSubmit();">
 								</form>
 							</div>
-		  </div>
 	  <br> <br>
 	   <div >
 		    {% for message in get_flashed_messages() %}
@@ -74,11 +65,15 @@
     </div>
     {% endfor %}
 		       <br><br><br>
-	   <div style="display:inline-block; width:50%; margin-left: 10%;"><a class="btn btn-info btn-lg btn-block " href="/hours" role="button">View</a></div>
+<!--	   <div class="text-center"><a class="btn btn-info btn-lg btn-block" href="/hours" role="button">View</a></div>-->
+
+<!--		   <div class="row justify-content-center"><input class="btn btn-primary btn-lg btn-block w-25 p-3" type="submit" name="submit" value="Send" onclick="finalCheckBeforeSendReport();"></div>-->
+
 		  </div>
- <br> <br> <br> <br> <br>
-		   <div class="container"><a class="link-primary" href="/logout">Logout</a></div>
-	    <br><br><br>
+ <br>	  <div class="container text-center"><a class="link-primary" href="/logout">Logout</a></div>
+
+		<br><br>
+		<p class="mt-5 mb-3 text-muted">&copy; 2017-2022</p>
   </div>
   </body>
 </html>
