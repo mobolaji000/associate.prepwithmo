@@ -71,7 +71,7 @@ class CreateMessageAsImage():
 
    @classmethod
    def writeTextAsImage(cls, textToWrite=None):
-      spacing = 25
+      spacing = 35
       img = Image.new('RGB', (400, 200), color='White')
       canvas = ImageDraw.Draw(img)
       font = ImageFont.truetype('/app/data/Noto_Sans/NotoSans-Bold.ttf', size=15)
