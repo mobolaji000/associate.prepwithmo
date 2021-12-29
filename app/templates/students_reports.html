@@ -27,7 +27,15 @@
 
 
 	   <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
+	  {% set ns = namespace(is_admin=false) %}
+		{% for role in current_user.roles %}
+		 {% if 'admin' in role.name %}
+							{% set ns.is_admin = true %}
+		 {% endif %}
+						  {% endfor %}
+		 {% if ns.is_admin %}
   <h1 class="h3 mb-3 font-weight-normal"><u>Enter Students Reports</u></h1>
+	  {% endif %}
 	     <br>
 	  <br>
 <div class="container-fluid" style="width:65%;">
@@ -106,7 +114,16 @@
 
   {% endfor %}
 									</div>
+									{% if students_names_data|length != 0 %}
+						{% if ns.is_admin %}
 									<br><div class="row justify-content-center"><input id="submit" name="submit" class="btn btn-primary btn-lg btn-block text-center w-25 p-3" type="submit" value="Submit"></div>
+									{% endif %}
+									{% else %}
+						<div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+	   <span>Unable to enter student report. No student has been assigned to you.</span>
+    </div>
+						{% endif %}
 								</form>
 							</div>
 		  </div>
