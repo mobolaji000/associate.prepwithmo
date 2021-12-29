@@ -50,6 +50,8 @@ class SendMessagesToClients():
       for k, v in message_as_text.items():
          message_as_text_to_send = message_as_text_to_send + "\n\n"+k+": \n\n"+v+"\n\n"
 
+      message_as_text_to_send = message_as_text_to_send + "\n\n" + "Regards," + ": \n" + "Mo" + "\n\n"
+
       media_sid = CreateMessageAsImage.uploadMessageImage(account_sid,auth_token,conversation.chat_service_sid)
       twilioClient.conversations.conversations(conversation.sid).messages.create(media_sid=media_sid,author='+19564771274')
       time.sleep(2) # wait before next send to help ensure order
