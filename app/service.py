@@ -52,7 +52,7 @@ class SendMessagesToClients():
 
       media_sid = CreateMessageAsImage.uploadMessageImage(account_sid,auth_token,conversation.chat_service_sid)
       twilioClient.conversations.conversations(conversation.sid).messages.create(media_sid=media_sid,author='+19564771274')
-      time.sleep(1) # wait before next send to help ensure order
+      time.sleep(2) # wait before next send to help ensure order
       twilioClient.conversations.conversations(conversation.sid).messages.create(body=message_as_text_to_send, author='+19564771274')
       print("texts sent!")
 

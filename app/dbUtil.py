@@ -38,7 +38,7 @@ class AppDBUtil():
             hours_worked = db.session.query(TutorHours).filter((TutorHours.tutor_email == tutor_email) & (TutorHours.day == day)).first()
 
             if hours_worked:
-                submit_hours_worked_message = "You already entered hours for today."
+                submit_hours_worked_message = "Hours not saved. You already entered hours for today."
             else:
                 hours_worked = TutorHours(tutor_email=tutor_email, day=day, hours=hours, memo=memo)
                 db.session.add(hours_worked)
