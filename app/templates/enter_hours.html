@@ -1,0 +1,79 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Hours</title>
+
+    <!-- Bootstrap core CSS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		  integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	<link href="static/page_style.css" rel="stylesheet">
+	<script type="text/javascript" src="static/hours.js"></script>
+
+    <!-- Custom styles for this template -->
+
+	  <script type="text/javascript">
+
+	  window.onload = function(){
+    var today = new Date().toLocaleString('en-us', {weekday:'long'})+' ('+new Date().toLocaleDateString()+')';
+    document.getElementById("day_div").innerHTML = today;
+};
+
+      function  finalCheckBeforeSubmit()
+      {
+      var today = new Date().toLocaleDateString();
+      $('input[name="day"]').val(today);
+      }
+		  
+	  </script>
+
+
+  </head>
+
+  <body class="text-center">
+
+  <div class="container">
+
+
+	   <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
+  <h1 class="h3 mb-3 font-weight-normal"><u>Hours</u></h1>
+	     <br>
+
+	  <h4 class="mb-3"><u>Enter Today's Hours</u></h4>
+
+	  <br><br><br>
+		  <div class="row justify-content-center">
+								<form action="{{url_for('submit_hours')}}" method="post">
+									<div id="day_div"  name="day_div"></div><br><br>
+									<input id="day"  name="day" class="form-control" hidden/><br><br>
+									<label for=hours>Hours</label>
+									<input id="hours"  name="hours" class="form-control" type="number" min="0"><br><br>
+									<label for=memo>Memo</label>
+									<textarea id="memo"  name="memo" class="form-control" rows="5"></textarea><br><br>
+									<input id="save" name="save" class="btn btn-primary btn-lg btn-block w-50 p-3" type="submit" value="Save"
+										   onclick="finalCheckBeforeSubmit();">
+								</form>
+							</div>
+	  <br> <br>
+	   <div >
+		    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning w-50 p-3" style="display:inline-block; width:50%;">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+		       <br><br><br>
+<!--	   <div class="text-center"><a class="btn btn-info btn-lg btn-block" href="/hours" role="button">View</a></div>-->
+
+<!--		   <div class="row justify-content-center"><input class="btn btn-primary btn-lg btn-block w-25 p-3" type="submit" name="submit" value="Send" onclick="finalCheckBeforeSendReport();"></div>-->
+
+		  </div>
+ <br>	  <div class="container text-center"><a class="link-primary" href="/logout">Logout</a></div>
+
+		<br><br>
+		<p class="mt-5 mb-3 text-muted">&copy; 2017-2022</p>
+  </div>
+  </body>
+</html>

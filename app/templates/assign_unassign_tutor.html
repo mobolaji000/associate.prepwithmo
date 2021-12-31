@@ -1,0 +1,81 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Assign Tutor</title>
+
+    <!-- Bootstrap core CSS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		  integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	<link href="static/page_style.css" rel="stylesheet">
+	  	<script type="text/javascript" src="static/assign_unassign_tutor.js"></script>
+
+
+    <!-- Custom styles for this template -->
+	  <script type="text/javascript">
+	  </script>
+  </head>
+
+
+  <body class="text-center">
+  <div class="container">
+      <div class="col-md-8 order-md-1">
+    <form class="form-signin" method="post" action="{{ url_for('assign_unassign_tutor') }}">
+  <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
+  <h4 class="mb-3">Assign Tutor</h4>
+				<hr class="mb-4" style="height:1px;border:none;color:#333;background-color:#333;width:20%;margin-left:40%;margin-right:10%;">
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<label for="tutor_data" class="form-label">Tutor name</label>
+						<input type="search" class="form-control" id="tutor_data" name="tutor_data"  list="tutors_data_list" required>
+						<datalist id="tutors_data_list">
+							<option value="" selected disabled hidden></option>
+													{% for name in tutors_data %}
+      <option value='{{ name }}'/>
+  {% endfor %}
+							</datalist>
+						</input>
+						<div class="invalid-feedback">
+							Valid tutor name is required.
+						</div>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="student_data">Student name</label>
+						<input type="search" class="form-control" id="student_data" name="student_data"  list="students_data_list" required>
+						<datalist id="students_data_list">
+							<option value="" selected disabled hidden></option>
+													{% for name in students_data %}
+      <option value='{{ name }}'/>
+  {% endfor %}
+							</datalist>
+						</input>
+						<div class="invalid-feedback">
+							Valid student name is required.
+						</div>
+					</div>
+				</div>
+		 <br> <br> <br>
+
+		 <div class="row justify-content-center"><input id="assign" name="submit" class="btn btn-primary btn-lg btn-block w-25 p-3" type="submit" value="Assign"></div>
+		<br><br><br>
+		 <div class="row justify-content-center"><input id="unassign" name="submit" class="btn btn-danger btn-lg btn-block w-25 p-3" type="submit" value="Unassign"></div>
+  		<br>
+		<div >
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+		<br>
+		<p class="mt-5 mb-3 text-muted">&copy; 2017-2022</p>
+</form>
+      </div>
+
+  </div>
+
+  </body>
+</html>
