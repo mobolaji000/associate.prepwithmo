@@ -17,7 +17,7 @@ COPY /overwrite_flask_user_mixin/user_mixin.py /usr/local/lib/python3.8/site-pac
 # copy the content of the local app directory to the working directory
 COPY app/ /app
 COPY data/ /app/data
-COPY vensti-df64afca06ca.json .
+#COPY vensti-df64afca06ca.json .
 
 #Wtrigger
 

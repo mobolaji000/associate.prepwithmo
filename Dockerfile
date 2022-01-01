@@ -17,7 +17,7 @@ COPY /overwrite_flask_user_mixin/user_mixin.py /usr/local/lib/python3.8/site-pac
 # copy the content of the local app directory to the working directory
 COPY app/ /app
 COPY data/ /app/data
-COPY vensti-df64afca06ca.json .
+#COPY vensti-df64afca06ca.json .
 
 #Wtrigger
 
@@ -31,8 +31,8 @@ ENV FLASK_RUN_PORT=5001
 
 ENV DEPLOY_REGION=prod
 
-# -v $(pwd)/data:/app/data
-#CMD  flask db init && flask db stamp head && flask db migrate -m "Initial migration." && python3 -m flask db upgrade && python3 -m flask run --host=0.0.0.0
-CMD python3 -m flask run --host=0.0.0.0
+# -v $(pwd)/data:/app/data#
+CMD  flask db init && flask db stamp head && flask db migrate -m "Initial migration." && python3 -m flask db upgrade && python3 -m flask run --host=0.0.0.0
+#CMD python3 -m flask run --host=0.0.0.0
 #docker kill associate.perfectscoremo && docker build -f Dockerfile.Local -t mobolaji00/associate.perfectscoremo . && docker run --rm --add-host=host:192.168.1.107 --name=associate.perfectscoremo -p 5001:5001 -v ${pwd}:/code --env-file DockerEnv mobolaji00/associate.perfectscoremo
 
