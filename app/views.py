@@ -233,7 +233,7 @@ def view_memos():
                                 memo_key = "Topics covered on {}".format(content.get('report_date',''))
                                 memos.update({memo_key:v})
                             elif k.startswith('memo_2'):
-                                memo_key = "Howework assigned on {}".format(content.get('report_date',''))
+                                memo_key = "Homework assigned on {}".format(content.get('report_date',''))
                                 memos.update({memo_key:v})
                             elif k.startswith('memo_3'):
                                 memo_key = "Miscellanous comments on {}".format(content.get('report_date',''))
