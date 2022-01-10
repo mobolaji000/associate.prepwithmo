@@ -101,17 +101,7 @@ def logout():
 @server.route('/admin_services',methods=['GET','POST'])
 @roles_required('admin')
 def admin_services():
-    if os.environ['DEPLOY_REGION'] == 'local':
-        transaction_setup_url = ''
-        lead_info_url = ''
-    if os.environ['DEPLOY_REGION'] == 'dev':
-        transaction_setup_url = ''
-        lead_info_url = ''
-    if os.environ['DEPLOY_REGION'] == 'prod':
-        transaction_setup_url = ''
-        lead_info_url = ''
-
-    return render_template('admin_services.html',transaction_setup_url=transaction_setup_url,lead_info_url=lead_info_url)
+    return render_template('admin_services.html',transaction_setup_url=os.environ['transaction_setup_url'],lead_info_url=os.environ['lead_info_url'])
 
 
 @server.route('/assign_unassign_tutor',methods=['GET','POST'])
