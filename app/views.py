@@ -1,3 +1,5 @@
+import os
+
 from flask import render_template, flash, make_response, redirect, url_for, request, jsonify, Response
 from werkzeug.urls import url_parse
 from app.config import Config
@@ -99,7 +101,7 @@ def logout():
 @server.route('/admin_services',methods=['GET','POST'])
 @roles_required('admin')
 def admin_services():
-    return render_template('admin_services.html')
+    return render_template('admin_services.html',transaction_setup_url=os.environ['transaction_setup_url'],lead_info_url=os.environ['lead_info_url'])
 
 
 @server.route('/assign_unassign_tutor',methods=['GET','POST'])
