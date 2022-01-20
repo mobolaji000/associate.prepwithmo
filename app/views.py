@@ -265,8 +265,12 @@ def view_memos():
 
 
 @login_manager.user_loader
-def load_user(email):
-    return User.query.get(email)
+def load_user(user_id):
+    #return User.query.get(email)
+    user = User.query.filter_by(id=user_id).first()
+    if user:
+        return user
+    return None
 
 #trigger
 @server.before_first_request

@@ -137,7 +137,6 @@ class AppDBUtil():
                 return save_students_reports_message, next_page,submitted_successfully
 
             if existing_submission_by_tutor:
-                print('Report not saved. You already made your report submission for today.')
                 save_students_reports_message = 'Report not saved. You already made your report submission for today.'
                 next_page = 'associate_services'
                 return save_students_reports_message,next_page,submitted_successfully
