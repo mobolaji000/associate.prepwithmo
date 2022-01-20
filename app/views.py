@@ -86,8 +86,8 @@ def submit_hours():
     memo = request.form['memo']
     submit_hours_worked_message = AppDBUtil.submitHoursWorked(tutor_email=current_user.email, day=day, hours=hours, memo=memo)
     flash(submit_hours_worked_message)
-    return render_template('enter_hours.html')
-    #return redirect(url_for('hours'))
+    #return render_template('enter_hours.html')
+    return redirect(url_for('associate_services'))
 
 
 @server.route('/logout', methods=['GET'])
@@ -143,6 +143,9 @@ def students_reports():
     elif request.method == 'POST':
         students_reports_contents = request.form.to_dict()
         save_students_reports_message,next_page,submitted_successfully = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
+        print(save_students_reports_message)
+        print(next_page)
+        print(submitted_successfully)
         if next_page == 'hours':
             if submitted_successfully:
                 flash(save_students_reports_message)
@@ -262,8 +265,12 @@ def view_memos():
 
 
 @login_manager.user_loader
-def load_user(email):
-    return User.query.get(email)
+def load_user(user_id):
+    #return User.query.get(email)
+    user = User.query.filter_by(id=user_id).first()
+    if user:
+        return user
+    return None
 
 #trigger
 @server.before_first_request
