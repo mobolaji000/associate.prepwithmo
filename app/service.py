@@ -5,6 +5,7 @@ from twilio.rest import Client as TwilioClient
 from pathlib import Path
 import os
 import requests
+import datetime
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -77,7 +78,9 @@ class CreateMessageAsImage():
       img = Image.new('RGB', (400, 200), color='White')
       canvas = ImageDraw.Draw(img)
       font = ImageFont.truetype('/app/data/Noto_Sans/NotoSans-Bold.ttf', size=15)
-      canvas.text((spacing, spacing), "Report for {}".format(textToWrite.get('report_date','')), font=font, fill='black')
+      report_date = textToWrite.get('report_date','')
+      report_day = datetime.datetime.strptime(report_date, "%m/%d/%Y").strftime('%A')
+      canvas.text((spacing, spacing), "Report for {} ({})".format(report_day,report_date), font=font, fill='black')
       canvas.line((spacing, spacing+20, spacing + 160, spacing+20),  fill='black')
       counter = 2
       for key,content in textToWrite.items():
