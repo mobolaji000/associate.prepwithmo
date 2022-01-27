@@ -3,7 +3,8 @@ $(document).ready(function() {
  window.onload = function(){
  var offset = -6; //adjust to cst
 var today = new Date(new Date().getTime() + offset * 3600 * 1000).toISOString().split('T')[0];
-        document.getElementById("start_date").value = today;
+var yesterday = new Date(new Date().getTime() + (offset-24) * 3600 * 1000).toISOString().split('T')[0];
+        document.getElementById("start_date").value = yesterday;
         document.getElementById("end_date").value = today;
 
         var is_admin = $("#is_admin");
