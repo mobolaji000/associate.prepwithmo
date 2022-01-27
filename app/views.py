@@ -1,7 +1,7 @@
 import os
 
 from flask import render_template, flash, make_response, redirect, url_for, request, jsonify, Response
-from werkzeug.urls import url_parse
+import datetime
 from app.config import Config
 from app.models import Tutor,User
 from flask_login import login_user,login_required,current_user,logout_user
@@ -233,15 +233,18 @@ def view_memos():
                 for key,content in all_students_reports_to_send.items():
                     if content.get('send_report','') == 'send':
                         memos,not_memos = {},{}
+                        report_date = content.get('report_date','')
+                        report_day = datetime.datetime.strptime(report_date, "%m/%d/%Y").strftime('%A')
+                        memos.update({'title':"Report for {} ({})".format(report_day, report_date)})
                         for k,v in content.items():
                             if k.startswith('memo_1'):
-                                memo_key = "Topics covered on {}".format(content.get('report_date',''))
+                                memo_key = "Topics Covered"
                                 memos.update({memo_key:v})
                             elif k.startswith('memo_2'):
-                                memo_key = "Homework assigned on {}".format(content.get('report_date',''))
+                                memo_key = "Homework Assigned"
                                 memos.update({memo_key:v})
                             elif k.startswith('memo_3'):
-                                memo_key = "Miscellanous comments on {}".format(content.get('report_date',''))
+                                memo_key = "Miscellanous Comments"
                                 memos.update({memo_key:v})
                             else:
                                 not_memos.update({k: v})

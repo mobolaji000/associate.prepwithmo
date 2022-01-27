@@ -47,9 +47,11 @@ class SendMessagesToClients():
          twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+1'+to_number)
 
       CreateMessageAsImage.writeTextAsImage(message_as_image)
-      message_as_text_to_send = ''
+      message_as_text_to_send = ''+message_as_text.get('title','')+"\n\n"
+
       for k, v in message_as_text.items():
-         message_as_text_to_send = message_as_text_to_send + "\n\n"+k+": \n\n"+v+"\n\n"
+         if k != 'title':
+            message_as_text_to_send = message_as_text_to_send + "\n\n"+k+": \n\n"+v+"\n\n"
 
       message_as_text_to_send = message_as_text_to_send + "\n\n" + "Regards," + " \n" + "Mo" + "\n\n"
 
