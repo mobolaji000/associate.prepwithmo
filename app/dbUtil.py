@@ -79,13 +79,13 @@ class AppDBUtil():
         return students
 
     @classmethod
-    def getStudentByEmail(cls,student_email=None):
-        student = db.session.query(Student).filter(Student.c.student_email == student_email,Student.c.is_active == True).first()
-        return student
+    def getStudentsByEmails(cls, students_emails=[]):
+        students = db.session.query(Student).filter((Student.c.student_email.in_(students_emails)), Student.c.is_active == True).all()
+        return students
 
     @classmethod
-    def getTutorStudentsAssignment(cls,tutor_email):
-        tutor_student_assignments = TutorStudentAssignment.query.filter((TutorStudentAssignment.tutor_email == tutor_email)).all()
+    def getTutorStudentsAssignment(cls, tutors_emails=[]):
+        tutor_student_assignments = TutorStudentAssignment.query.filter((TutorStudentAssignment.tutor_email.in_(tutors_emails))).all()
         return tutor_student_assignments
 
 
