@@ -1,3 +1,4 @@
+import ast
 import os
 
 from flask import render_template, flash, make_response, redirect, url_for, request, jsonify, Response
@@ -126,18 +127,60 @@ def assign_unassign_tutor():
             assign_unassign_result_message = AppDBUtil.assignUnassign(tutor_email,student_email,assign_unassign_tutor_contents['submit'])
             flash(assign_unassign_result_message)
         return redirect('assign_unassign_tutor')
-
-@server.route('/students_reports',methods=['GET','POST'])
+    
+    
+@server.route('/add_students_one_time',methods=['GET','POST'])
 @login_required
-def students_reports():
+def add_students_one_time():
     if request.method == 'GET':
+        tutors_emails = []
+
+        for tutor in AppDBUtil.getTutors():
+            if tutor != current_user.email:
+                tutors_emails.append(tutor.tutor_email)
+
+        tutors_info = {}
+        students_info = {}
+        tutor_students_assignments = AppDBUtil.getTutorStudentsAssignment(tutors_emails=tutors_emails)
+
+        for assignment in tutor_students_assignments:
+            students_info.update({assignment.student_email: assignment.student_first_name + " " + assignment.student_last_name+" ("+assignment.student_email+")"})
+            tutors_info.update({assignment.tutor_email: assignment.tutor_first_name + " " + assignment.tutor_last_name+" ("+assignment.tutor_email+")"})
+        return render_template('add_students_one_time.html', tutors_info=json.dumps(tutors_info), students_info=json.dumps(students_info))
+    elif request.method == 'POST':
+        students_to_search_for = request.form.to_dict()
+        print('tutors_to_add: ',students_to_search_for['tutors_to_add'])
+        print('students_to_add: ', students_to_search_for['students_to_add'])
+        tutors_to_add = students_to_search_for['tutors_to_add'].split('\r\n')
+        students_to_add = students_to_search_for['students_to_add'].split('\r\n')
+        extra_students = {'tutors_to_add':tutors_to_add,'students_to_add':students_to_add}
+        print('1. extra_students are: ',extra_students)
+        return redirect(url_for('students_reports',extra_students=extra_students))
+
+#@server.route('/students_reports',methods=['GET','POST'])
+@server.route('/students_reports',defaults={'extra_students': None}, methods=['GET','POST'])
+@server.route('/students_reports/<extra_students>', methods=['GET','POST'])
+@login_required
+def students_reports(extra_students):
+    if request.method == 'GET':
+        extra_students = ast.literal_eval(extra_students) if extra_students else {}
+        tutors_emails = [current_user.email]
+        tutors_emails.extend(extra_students.get('tutors_to_add',''))
+
         students_names_data, students_emails_data, students_ids_data = [], [], []
-        tutor_student_assignments = AppDBUtil.getTutorStudentsAssignment(tutor_email=current_user.email)
-        for student in tutor_student_assignments:
-            student_id = AppDBUtil.getStudentByEmail(student_email=student.student_email)['student_id']
-            students_names_data.append(student.student_first_name + " " + student.student_last_name)
-            students_emails_data.append(student.student_email)
-            students_ids_data.append(student_id)
+        tutor_student_assignments = AppDBUtil.getTutorStudentsAssignment(tutors_emails=tutors_emails)
+
+        for assigned_student in tutor_student_assignments:
+            student = AppDBUtil.getStudentsByEmails(students_emails=[assigned_student.student_email])[0]
+            students_names_data.append(assigned_student.student_first_name + " " + assigned_student.student_last_name)
+            students_emails_data.append(assigned_student.student_email)
+            students_ids_data.append(student.student_id)
+
+        for retrieved_student in AppDBUtil.getStudentsByEmails(students_emails=extra_students.get('students_to_add',[])):
+            print("student id is ", retrieved_student.student_id)
+            students_names_data.append(retrieved_student.student_first_name + " " + retrieved_student.student_last_name)
+            students_emails_data.append(retrieved_student.student_email)
+            students_ids_data.append(retrieved_student.student_id)
 
         return render_template('students_reports.html',students_names_data=students_names_data,students_ids_data=students_ids_data,students_emails_data=students_emails_data)
     elif request.method == 'POST':
@@ -197,12 +240,11 @@ def view_memos():
         tutors_info = {}
         students_info = {}
         students_reports = ''
-        for email in tutors_emails:
-            tutor_students_assignments = AppDBUtil.getTutorStudentsAssignment(email)
+        tutor_students_assignments = AppDBUtil.getTutorStudentsAssignment(tutors_emails=tutors_emails)
 
-            for assignment in tutor_students_assignments:
-                students_info.update({assignment.student_email:assignment.student_first_name+" "+assignment.student_last_name})
-                tutors_info.update({assignment.tutor_email:assignment.tutor_first_name+" "+assignment.tutor_last_name})
+        for assignment in tutor_students_assignments:
+            students_info.update({assignment.student_email:assignment.student_first_name+" "+assignment.student_last_name})
+            tutors_info.update({assignment.tutor_email:assignment.tutor_first_name+" "+assignment.tutor_last_name})
 
         if request.method == 'POST':
             view_memos_contents = request.form.to_dict()
@@ -215,7 +257,7 @@ def view_memos():
 
                 for report in existing_submission_by_tutor:
                     report_by_day = students_reports.get(report.day.strftime('%m/%d/%Y'), {})
-                    student = AppDBUtil.getStudentByEmail(report.student_email)
+                    student = dict(AppDBUtil.getStudentsByEmails(students_emails=[report.student_email])[0])
                     report_by_day.update({report.student_email: [student.student_first_name+" "+student.student_last_name,report.attendance, report.home_work, report.memo_1, report.memo_2, report.memo_3]})
                     students_reports.update({report.day.strftime('%m/%d/%Y'):report_by_day})
 
@@ -250,7 +292,7 @@ def view_memos():
                                 not_memos.update({k: v})
                         # memos = {k:v for k, v in content.items() if k.startswith('memo')}
                         # not_memos = {k:v for k, v in content.items() if not (k.startswith('memo') or k.startswith('send'))}
-                        student = AppDBUtil.getStudentByEmail(key)
+                        student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key]))[0]
                         to_numbers = [number for number in [student['parent_1_phone_number'],student['parent_2_phone_number'],student['student_phone_number']] if number != '']
                         SendMessagesToClients.sendSMS(to_numbers=to_numbers,message_as_text=memos,message_as_image=not_memos)
                         flash("Report successfully sent.")
@@ -265,6 +307,12 @@ def view_memos():
         traceback.print_exc()
     finally:
         return render_template('view_memos.html', tutors_info=json.dumps(tutors_info), students_info=json.dumps(students_info), students_reports=students_reports, is_admin=is_admin)
+
+
+@server.route('/send_message',methods=['GET','POST'])
+#@roles_required('admin')
+def send_message():
+    return render_template('send_message.html')
 
 
 @login_manager.user_loader
