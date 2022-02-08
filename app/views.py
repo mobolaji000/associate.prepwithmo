@@ -293,7 +293,7 @@ def view_memos():
                                 not_memos.update({k: v})
                         # memos = {k:v for k, v in content.items() if k.startswith('memo')}
                         # not_memos = {k:v for k, v in content.items() if not (k.startswith('memo') or k.startswith('send'))}
-                        student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key]))[0]
+                        student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key])[0])
                         to_numbers = [number for number in [student['parent_1_phone_number'],student['parent_2_phone_number'],student['student_phone_number']] if number != '']
                         SendMessagesToClients.sendSMS(to_numbers=to_numbers,message_as_text=memos,message_as_image=not_memos)
                         flash("Report successfully sent.")
