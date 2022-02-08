@@ -259,7 +259,7 @@ def view_memos():
                     report_by_day = students_reports.get(report.day.strftime('%m/%d/%Y'), {})
                     student = dict(AppDBUtil.getStudentsByEmails(students_emails=[report.student_email])[0])
                     print(student)
-                    report_by_day.update({report.student_email: [student.student_first_name+" "+student.student_last_name,report.attendance, report.home_work, report.memo_1, report.memo_2, report.memo_3]})
+                    report_by_day.update({report.student_email: [student['student_first_name']+" "+student['student_last_name'],report.attendance, report.home_work, report.memo_1, report.memo_2, report.memo_3]})
                     students_reports.update({report.day.strftime('%m/%d/%Y'):report_by_day})
 
             elif  view_memos_contents['submit'] == "Send":
