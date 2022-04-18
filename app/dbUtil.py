@@ -223,6 +223,10 @@ class AppDBUtil():
         return existing_submission_by_tutor
 
     @classmethod
+    def autoSendReportsForTrustedTutors(cls,tutor_email='', students_reports_contents={}):
+        pass
+
+    @classmethod
     def executeDBQuery(cls):
         try:
             db.session.commit()

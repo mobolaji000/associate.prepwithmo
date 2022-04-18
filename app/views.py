@@ -186,6 +186,47 @@ def students_reports(extra_students):
     elif request.method == 'POST':
         students_reports_contents = request.form.to_dict()
         save_students_reports_message,next_page,submitted_successfully = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
+
+        is_trusted_tutor = False
+        for role in current_user.roles:
+            if role.name == 'trusted_tutor':
+                is_trusted_tutor = True
+
+        all_students_reports_to_send = {}
+        for key, content in students_reports_contents.items():
+            if len(key.split('_vensti_')) > 1:
+                student_email = key.split('_vensti_')[0]
+                report_type = key.split('_vensti_')[1]
+                this_student_report_to_send = all_students_reports_to_send.get(student_email, {})
+                this_student_report_to_send.update({report_type: content})
+                all_students_reports_to_send.update({student_email: this_student_report_to_send})
+
+        print(all_students_reports_to_send)
+        for key, content in all_students_reports_to_send.items():
+            if is_trusted_tutor:
+                memos, not_memos = {}, {}
+                report_date = content.get('report_date', '')
+                report_day = datetime.datetime.strptime(report_date, "%m/%d/%Y").strftime('%A')
+                memos.update({'title': "Report for {} ({})".format(report_day, report_date)})
+                for k, v in content.items():
+                    if k.startswith('memo_1'):
+                        memo_key = "Topics Covered"
+                        memos.update({memo_key: SendMessagesToClients.cleanMessage(v)})
+                    elif k.startswith('memo_2'):
+                        memo_key = "Homework Assigned"
+                        memos.update({memo_key: SendMessagesToClients.cleanMessage(v)})
+                    elif k.startswith('memo_3'):
+                        memo_key = "Miscellanous Comments"
+                        memos.update({memo_key: SendMessagesToClients.cleanMessage(v)})
+                    else:
+                        not_memos.update({k: SendMessagesToClients.cleanMessage(v)})
+
+                student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key])[0])
+                to_numbers = [number for number in [student['parent_1_phone_number'], student['parent_2_phone_number'], student['student_phone_number']] if number != '']
+                SendMessagesToClients.sendSMS(to_numbers=to_numbers, message_as_text=memos, message_as_image=not_memos)
+                flash("Report successfully sent for trusted tutor.")
+
+
         print(save_students_reports_message)
         print(next_page)
         print(submitted_successfully)
@@ -282,21 +323,19 @@ def view_memos():
                         for k,v in content.items():
                             if k.startswith('memo_1'):
                                 memo_key = "Topics Covered"
-                                memos.update({memo_key:v})
+                                memos.update({memo_key:SendMessagesToClients.cleanMessage(v)})
                             elif k.startswith('memo_2'):
                                 memo_key = "Homework Assigned"
-                                memos.update({memo_key:v})
+                                memos.update({memo_key:SendMessagesToClients.cleanMessage(v)})
                             elif k.startswith('memo_3'):
                                 memo_key = "Miscellanous Comments"
-                                memos.update({memo_key:v})
+                                memos.update({memo_key:SendMessagesToClients.cleanMessage(v)})
                             else:
-                                not_memos.update({k: v})
-                        # memos = {k:v for k, v in content.items() if k.startswith('memo')}
-                        # not_memos = {k:v for k, v in content.items() if not (k.startswith('memo') or k.startswith('send'))}
+                                not_memos.update({k:SendMessagesToClients.cleanMessage(v)})
                         student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key])[0])
                         to_numbers = [number for number in [student['parent_1_phone_number'],student['parent_2_phone_number'],student['student_phone_number']] if number != '']
                         SendMessagesToClients.sendSMS(to_numbers=to_numbers,message_as_text=memos,message_as_image=not_memos)
-                        flash("Report successfully sent.")
+                        flash("Report successfully sent from admin page.")
 
             print(view_memos_contents)
             print(students_info)
