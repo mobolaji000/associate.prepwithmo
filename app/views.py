@@ -185,8 +185,7 @@ def students_reports(extra_students):
         return render_template('students_reports.html',students_names_data=students_names_data,students_ids_data=students_ids_data,students_emails_data=students_emails_data)
     elif request.method == 'POST':
         students_reports_contents = request.form.to_dict()
-        save_students_reports_message,next_page,submitted_successfully = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
-
+        # auto send reports for trusted tutors
         is_trusted_tutor = False
         for role in current_user.roles:
             if role.name == 'trusted_tutor':
@@ -205,8 +204,8 @@ def students_reports(extra_students):
         for key, content in all_students_reports_to_send.items():
             if is_trusted_tutor:
                 memos, not_memos = {}, {}
-                report_date = content.get('report_date', '')
-                report_day = datetime.datetime.strptime(report_date, "%m/%d/%Y").strftime('%A')
+                report_date = datetime.datetime.strftime(datetime.datetime.now(), "%m/%d/%Y")
+                report_day = datetime.datetime.now().strftime('%A')
                 memos.update({'title': "Report for {} ({})".format(report_day, report_date)})
                 for k, v in content.items():
                     if k.startswith('memo_1'):
@@ -226,7 +225,8 @@ def students_reports(extra_students):
                 SendMessagesToClients.sendSMS(to_numbers=to_numbers, message_as_text=memos, message_as_image=not_memos)
                 flash("Report successfully sent for trusted tutor.")
 
-
+        # save reports
+        save_students_reports_message,next_page,submitted_successfully = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
         print(save_students_reports_message)
         print(next_page)
         print(submitted_successfully)
