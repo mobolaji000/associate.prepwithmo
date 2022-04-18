@@ -6,6 +6,7 @@ from pathlib import Path
 import os
 import requests
 import datetime
+import re
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -17,6 +18,15 @@ class SendMessagesToClients():
 
    def __init__(self):
       pass
+
+   @classmethod
+   def cleanMessage(cls,message=''):
+      def regexReplaceFunction(match=''):
+         return match.group(0).upper()
+
+      cleaned_message = re.sub('[\.][\s]+[a-z]', regexReplaceFunction, message)
+      cleaned_message = cleaned_message[0].upper()+cleaned_message[1:]
+      return cleaned_message
 
    #not needed now; might be needed in future
    @classmethod
