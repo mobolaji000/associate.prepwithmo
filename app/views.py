@@ -205,6 +205,7 @@ def students_reports(extra_students):
             if is_trusted_tutor:
                 memos, not_memos = {}, {}
                 report_date = datetime.datetime.strftime(datetime.datetime.now(), "%m/%d/%Y")
+                content['report_date'] = report_date
                 report_day = datetime.datetime.now().strftime('%A')
                 memos.update({'title': "Report for {} ({})".format(report_day, report_date)})
                 for k, v in content.items():
