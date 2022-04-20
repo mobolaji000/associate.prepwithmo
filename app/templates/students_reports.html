@@ -98,8 +98,11 @@
 											</div>
 
 
+											</div>
+
+
 											{% if ns.is_trusted_tutor %}
-							<div class="form-check col text-center">
+							<div class="form-check row text-center">
   <input class="form-check-input" type="checkbox" value="send" id={{[student_email,"_vensti_send_report"]|join}} name={{[student_email,"_vensti_send_report"]|join}}>
   <label class="form-check-label" for={{[student_email,"_vensti_send_report"]|join}}>
     Send report
@@ -108,7 +111,6 @@
 							{% endif %}
 
 
-											</div>
 
 <datalist id="attendance_options" >
 	<option value='Yes'>
