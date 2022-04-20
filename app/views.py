@@ -1,6 +1,6 @@
 import ast
 import os
-
+import pytz
 from flask import render_template, flash, make_response, redirect, url_for, request, jsonify, Response
 import datetime
 from app.config import Config
@@ -202,11 +202,12 @@ def students_reports(extra_students):
 
         print(all_students_reports_to_send)
         for key, content in all_students_reports_to_send.items():
-            if is_trusted_tutor:
+            if is_trusted_tutor and content.get('send_report','') == 'send':
                 memos, not_memos = {}, {}
-                report_date = datetime.datetime.strftime(datetime.datetime.now(), "%m/%d/%Y")
+                report_date = datetime.datetime.strftime(datetime.datetime.now(pytz.timezone('US/Central')), "%m/%d/%Y")
+
                 content['report_date'] = report_date
-                report_day = datetime.datetime.now().strftime('%A')
+                report_day = datetime.datetime.now(pytz.timezone('US/Central')).strftime('%A')
                 memos.update({'title': "Report for {} ({})".format(report_day, report_date)})
                 for k, v in content.items():
                     if k.startswith('memo_1'):
@@ -269,11 +270,12 @@ def view_hours():
 def view_memos():
     try:
         tutors_emails = []
-        is_admin = False
+        is_trusted_tutor = False
         for role in current_user.roles:
-            if role.name == 'admin':
-                is_admin = True
-        if is_admin:
+            if role.name == 'trusted_tutor':
+                is_trusted_tutor = True
+
+        if is_trusted_tutor:
             for tutor in AppDBUtil.getTutors():
                 tutors_emails.append(tutor.tutor_email)
         else:

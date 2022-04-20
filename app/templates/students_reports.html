@@ -28,9 +28,13 @@
 
 	   <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
 	  {% set ns = namespace(is_admin=false) %}
+	  {% set ns = namespace(is_trusted_tutor=false) %}
 		{% for role in current_user.roles %}
 		 {% if 'admin' in role.name %}
 							{% set ns.is_admin = true %}
+		 {% endif %}
+	  {% if 'trusted_tutor' in role.name %}
+							{% set ns.is_trusted_tutor = true %}
 		 {% endif %}
 						  {% endfor %}
   <h1 class="h3 mb-3 font-weight-normal"><u>Enter Students Reports</u></h1>
@@ -90,8 +94,19 @@
 
 											<div class="col text-center" >
 	<label for={{[student_email,"_vensti_memo_3"]|join}}>Any further comments?</label>
-	<textarea  id={{[student_email,"_vensti_memo_3"]|join}} name={{[student_email,"_vensti_memo_3"]|join}} class="form-control" rows="5" required placeholder="EXPLICITLY COMMENT ON WHTETHER OR NOT THEY DID THE WORKSHEETS AND KHAN ACADEMY (ask them if I assigned them the latter)! Comment on other things you observed e.g tardiness, seriousness etc"></textarea>
+	<textarea  id={{[student_email,"_vensti_memo_3"]|join}} name={{[student_email,"_vensti_memo_3"]|join}} class="form-control" rows="5" required placeholder="EXPLICITLY COMMENT ON WHETHER OR NOT THEY DID THE WORKSHEETS AND KHAN ACADEMY (ask them if I assigned them the latter)! Comment on other things you observed e.g tardiness, seriousness etc"></textarea>
 											</div>
+
+
+											{% if ns.trusted_tutor %}
+							<div class="form-check col text-center">
+  <input class="form-check-input" type="checkbox" value="send" id={{[student_email,"_vensti_send_report"]|join}} name={{[student_email,"_vensti_send_report"]|join}}>
+  <label class="form-check-label" for={{[student_email,"_vensti_send_report"]|join}}>
+    Send report
+  </label>
+</div>
+							{% endif %}
+
 
 											</div>
 
