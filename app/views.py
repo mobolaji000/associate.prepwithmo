@@ -275,6 +275,11 @@ def view_memos():
             if role.name == 'trusted_tutor':
                 is_trusted_tutor = True
 
+        is_admin = False
+        for role in current_user.roles:
+            if role.name == 'admin':
+                is_admin = True
+
         if is_trusted_tutor:
             for tutor in AppDBUtil.getTutors():
                 tutors_emails.append(tutor.tutor_email)
