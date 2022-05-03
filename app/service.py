@@ -40,10 +40,17 @@ class SendMessagesToClients():
       twilioClient = TwilioClient(account_sid, auth_token)
 
       #twilioClient.messaging.services('MGd37b2dce09791f42239043b6e949f96b').delete()
-      conversations =  twilioClient.conversations.conversations.list(limit=50)
+      conversations =  twilioClient.conversations.conversations.list(limit=100)#
       for record in conversations:
           print(record.sid)
           twilioClient.conversations.conversations(record.sid).delete()
+
+      listToVerifyDeleteComplete = twilioClient.conversations.conversations.list(limit=100)
+      print("listToVerifyDeleteComplete is: ",listToVerifyDeleteComplete)
+      while listToVerifyDeleteComplete:
+         print("Waiting for 2 seconds to give deletion action time to complete before proceeding.")
+         time.sleep(2)
+         listToVerifyDeleteComplete = twilioClient.conversations.conversations.list(limit=100)
 
       conversation = twilioClient.conversations.conversations.create(messaging_service_sid='MG0faa1995ce52477a642163564295650c',friendly_name='DailyReport')
       print("conversation created!")
