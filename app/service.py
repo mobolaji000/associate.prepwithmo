@@ -7,6 +7,7 @@ import os
 import requests
 import datetime
 import re
+from app.config import Config
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -52,11 +53,11 @@ class SendMessagesToClients():
          time.sleep(2)
          listToVerifyDeleteComplete = twilioClient.conversations.conversations.list(limit=100)
 
-      conversation = twilioClient.conversations.conversations.create(messaging_service_sid='MG0faa1995ce52477a642163564295650c',friendly_name='DailyReport')
+      conversation = twilioClient.conversations.conversations.create(messaging_service_sid=Config.twilio_messaging_service_sid,friendly_name='AssociateService')
       print("conversation created!")
       print(conversation.sid)
 
-      twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_projected_address='+19564771274')
+      twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_projected_address=Config.twilio_sms_number)
       twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+19725847364')
 
       for to_number in to_numbers:
@@ -73,9 +74,9 @@ class SendMessagesToClients():
       message_as_text_to_send = message_as_text_to_send + "\n\n" + "Regards," + " \n" + "Mo" + "\n\n"
 
       media_sid = CreateMessageAsImage.uploadMessageImage(account_sid,auth_token,conversation.chat_service_sid)
-      twilioClient.conversations.conversations(conversation.sid).messages.create(media_sid=media_sid,author='+19564771274')
+      twilioClient.conversations.conversations(conversation.sid).messages.create(media_sid=media_sid,author=Config.twilio_sms_number)
       time.sleep(2) # wait before next send to help ensure order
-      twilioClient.conversations.conversations(conversation.sid).messages.create(body=message_as_text_to_send, author='+19564771274')
+      twilioClient.conversations.conversations(conversation.sid).messages.create(body=message_as_text_to_send, author=Config.twilio_sms_number)
       print("texts sent!")
 
 class CreateMessageAsImage():
