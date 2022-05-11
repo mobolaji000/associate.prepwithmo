@@ -159,7 +159,7 @@ def add_students_one_time():
         tutors_to_add = students_to_search_for['tutors_to_add'].split('\r\n')
         students_to_add = students_to_search_for['students_to_add'].split('\r\n')
         extra_students = {'tutors_to_add':tutors_to_add,'students_to_add':students_to_add}
-        print('1. extra_students are: ',extra_students)
+        logger.info('Extra tutors and students are: ',extra_students)
         return redirect(url_for('students_reports',extra_students=extra_students))
 
 #@server.route('/students_reports',methods=['GET','POST'])
@@ -169,6 +169,7 @@ def add_students_one_time():
 def students_reports(extra_students):
     try:
         if request.method == 'GET':
+            logger.debug("In GET for students_reports")
             extra_students = ast.literal_eval(extra_students) if extra_students else {}
             tutors_emails = [current_user.email]
             tutors_emails.extend(extra_students.get('tutors_to_add',''))
@@ -190,6 +191,7 @@ def students_reports(extra_students):
 
             return render_template('students_reports.html',students_names_data=students_names_data,students_ids_data=students_ids_data,students_emails_data=students_emails_data)
         elif request.method == 'POST':
+            logger.debug("In POST for students_reports")
             students_reports_contents = request.form.to_dict()
             # auto send reports for trusted tutors
             is_trusted_tutor = False
@@ -206,7 +208,7 @@ def students_reports(extra_students):
                     this_student_report_to_send.update({report_type: content})
                     all_students_reports_to_send.update({student_email: this_student_report_to_send})
 
-            print(all_students_reports_to_send)
+            logger.info("Reports about to be sent are: "+str(all_students_reports_to_send))
             for key, content in all_students_reports_to_send.items():
                 if is_trusted_tutor and content.get('send_report','') == 'send':
                     memos, not_memos = {}, {}
@@ -256,8 +258,10 @@ def students_reports(extra_students):
         flash("Error in saving or sending reports. Contact Mo.")
         print(e)
         traceback.print_exc()
-    finally:
         return redirect(url_for('students_reports'))
+    finally:
+        pass
+
 
 # @server.route('/twilio', methods=['GET','POST'])
 # @login_required
