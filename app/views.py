@@ -259,7 +259,51 @@ def students_reports(extra_students):
     finally:
         return redirect(url_for('students_reports'))
 
-
+# @server.route('/twilio', methods=['GET','POST'])
+# @login_required
+# def twilio():
+#     account_sid = SendMessagesToClients.awsInstance.get_secret("twilio_cred", "TWILIO_ACCOUNT_SID") or os.environ['TWILIO_ACCOUNT_SID']
+#     auth_token = SendMessagesToClients.awsInstance.get_secret("twilio_cred", "TWILIO_AUTH_TOKEN") or os.environ['TWILIO_AUTH_TOKEN']
+#     twilioClient = TwilioClient(account_sid, auth_token)
+#
+#     # twilioClient.messaging.services('MGd37b2dce09791f42239043b6e949f96b').delete()
+#     conversations = twilioClient.conversations.conversations.list(limit=100)  #
+#     for record in conversations:
+#         print(record.sid)
+#         twilioClient.conversations.conversations(record.sid).delete()
+#
+#     listToVerifyDeleteComplete = twilioClient.conversations.conversations.list(limit=100)
+#     print("listToVerifyDeleteComplete is: ", listToVerifyDeleteComplete)
+#     while listToVerifyDeleteComplete:
+#         print("Waiting for 2 seconds to give deletion action time to complete before proceeding.")
+#         time.sleep(2)
+#         listToVerifyDeleteComplete = twilioClient.conversations.conversations.list(limit=100)
+#
+#     conversation = twilioClient.conversations.conversations.create(messaging_service_sid='MG0faa1995ce52477a642163564295650c', friendly_name='DailyReport')
+#     print("conversation created!")
+#     print(conversation.sid)
+#
+#     twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_projected_address='+19564771274')
+#     twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+19725847364')
+#
+#     for to_number in to_numbers:
+#         print("to_number is ", to_number)
+#         twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+1' + to_number)
+#
+#     CreateMessageAsImage.writeTextAsImage(message_as_image)
+#     message_as_text_to_send = '' + message_as_text.get('title', '') + "\n\n"
+#
+#     for k, v in message_as_text.items():
+#         if k != 'title':
+#             message_as_text_to_send = message_as_text_to_send + "\n\n" + k + ": \n\n" + v + "\n\n"
+#
+#     message_as_text_to_send = message_as_text_to_send + "\n\n" + "Regards," + " \n" + "Mo" + "\n\n"
+#
+#     media_sid = CreateMessageAsImage.uploadMessageImage(account_sid, auth_token, conversation.chat_service_sid)
+#     twilioClient.conversations.conversations(conversation.sid).messages.create(media_sid=media_sid, author='+19564771274')
+#     time.sleep(2)  # wait before next send to help ensure order
+#     twilioClient.conversations.conversations(conversation.sid).messages.create(body=message_as_text_to_send, author='+19564771274')
+#     print("texts sent!")
 
 
 @server.route('/view_hours', methods=['GET','POST'])

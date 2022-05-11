@@ -1,6 +1,7 @@
 import os
 from app.aws import AWSInstance
 import traceback
+from twilio.rest import Client as TwilioClient
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 awsInstance = AWSInstance()
@@ -98,6 +99,13 @@ class Config(object):
 
             USER_CORPORATION_NAME = 'PrepWithMo'
             USER_COPYRIGHT_YEAR = 2022
+
+        twilio_account_sid = os.environ['TWILIO_ACCOUNT_SID']
+        twilio_auth_token = os.environ['TWILIO_AUTH_TOKEN']
+        twilio_sms_number = os.environ['TWILIO_SMS_NUMBER']
+        twilio_messaging_service_sid = os.environ['TWILIO_MESSAGING_SERVICE_SID']
+
+        twilioClient = TwilioClient(twilio_account_sid, twilio_auth_token)
 
 
     except Exception as e:
