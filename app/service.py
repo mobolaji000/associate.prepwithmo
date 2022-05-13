@@ -8,10 +8,16 @@ import requests
 import datetime
 import re
 from app.config import Config
+import logging
 
 from PIL import Image, ImageDraw, ImageFont
 
 ssl._create_default_https_context = ssl._create_unverified_context
+
+logger = logging.getLogger(__name__)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+logger.addHandler(ch)
 
 
 class SendMessagesToClients():
@@ -43,25 +49,24 @@ class SendMessagesToClients():
       #twilioClient.messaging.services('MGd37b2dce09791f42239043b6e949f96b').delete()
       conversations =  twilioClient.conversations.conversations.list(limit=100)#
       for record in conversations:
-          print(record.sid)
+          logger.info("Deleted record is: "+str(record.sid))
           twilioClient.conversations.conversations(record.sid).delete()
 
       listToVerifyDeleteComplete = twilioClient.conversations.conversations.list(limit=100)
-      print("listToVerifyDeleteComplete is: ",listToVerifyDeleteComplete)
+      logger.info("listToVerifyDeleteComplete is: " + str(listToVerifyDeleteComplete))
       while listToVerifyDeleteComplete:
-         print("Waiting for 2 seconds to give deletion action time to complete before proceeding.")
+         logger.info("Waiting for 2 seconds to give deletion action time to complete before proceeding.")
          time.sleep(2)
          listToVerifyDeleteComplete = twilioClient.conversations.conversations.list(limit=100)
 
       conversation = twilioClient.conversations.conversations.create(messaging_service_sid=Config.twilio_messaging_service_sid,friendly_name='AssociateService')
-      print("conversation created!")
-      print(conversation.sid)
+      logger.info("conversation created: "+str(conversation.sid)+"!")
 
       twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_projected_address=Config.twilio_sms_number)
       twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+19725847364')
 
       for to_number in to_numbers:
-         print("to_number is ",to_number)
+         logger.info("to_number is ",to_number)
          twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+1'+to_number)
 
       CreateMessageAsImage.writeTextAsImage(message_as_image)
@@ -77,7 +82,7 @@ class SendMessagesToClients():
       twilioClient.conversations.conversations(conversation.sid).messages.create(media_sid=media_sid,author=Config.twilio_sms_number)
       time.sleep(2) # wait before next send to help ensure order
       twilioClient.conversations.conversations(conversation.sid).messages.create(body=message_as_text_to_send, author=Config.twilio_sms_number)
-      print("texts sent!")
+      logger.info("texts sent!")
 
 class CreateMessageAsImage():
    @classmethod
