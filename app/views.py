@@ -154,12 +154,12 @@ def add_students_one_time():
         return render_template('add_students_one_time.html', tutors_info=json.dumps(tutors_info), students_info=json.dumps(students_info))
     elif request.method == 'POST':
         students_to_search_for = request.form.to_dict()
-        logger.info('Tutors to search for are: ', students_to_search_for['tutors_to_add'])
-        logger.info('Students to search for are: ', students_to_search_for['students_to_add'])
+        logger.debug('Tutors to search for are: {}'.format(str(students_to_search_for['tutors_to_add'])))
+        logger.debug('Students to search for are: {}'.format(str(students_to_search_for['students_to_add'])))
         tutors_to_add = students_to_search_for['tutors_to_add'].split('\r\n')
         students_to_add = students_to_search_for['students_to_add'].split('\r\n')
         extra_students = {'tutors_to_add':tutors_to_add,'students_to_add':students_to_add}
-        logger.info('Extra tutors and students are: ',extra_students)
+        logger.debug('Extra tutors and students are: {}'.format(str(extra_students)))
         return redirect(url_for('students_reports',extra_students=extra_students))
 
 #@server.route('/students_reports',methods=['GET','POST'])
@@ -208,7 +208,7 @@ def students_reports(extra_students):
                     this_student_report_to_send.update({report_type: content})
                     all_students_reports_to_send.update({student_email: this_student_report_to_send})
 
-            logger.info("Reports received from frontend for saving and/or sending are: "+str(all_students_reports_to_send))
+            logger.debug("Reports received from frontend for saving and/or sending are: "+str(all_students_reports_to_send))
             for key, content in all_students_reports_to_send.items():
                 if is_trusted_tutor and content.get('send_report','') == 'send':
                     memos, not_memos = {}, {}
@@ -238,9 +238,9 @@ def students_reports(extra_students):
             # save reports
             save_students_reports_message,next_page,submitted_successfully = AppDBUtil.saveStudentsReports(tutor_email=current_user.email, students_reports_contents=students_reports_contents)
 
-            logger.info('save_students_reports_message is: '+ str(save_students_reports_message))
-            logger.info('next_page is: ' + str(next_page))
-            logger.info('submitted_successfully is: ' + str(submitted_successfully))
+            logger.debug('save_students_reports_message is: '+ str(save_students_reports_message))
+            logger.debug('next_page is: ' + str(next_page))
+            logger.debug('submitted_successfully is: ' + str(submitted_successfully))
 
             if next_page == 'hours':
                 if submitted_successfully:
