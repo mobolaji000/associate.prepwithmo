@@ -63,7 +63,8 @@ class SendMessagesToClients():
       logger.debug("conversation created: "+str(conversation.sid)+"!")
 
       twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_projected_address=Config.twilio_sms_number)
-      twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+19725847364')
+      twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+19725847364') #add mo
+      cls.twilioClient.conversations.conversations(conversation.sid).participants.create(messaging_binding_address='+18177160139') # add assitant
 
       for to_number in to_numbers:
          logger.debug("to_number is "+str(to_number))

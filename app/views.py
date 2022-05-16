@@ -133,7 +133,7 @@ def assign_unassign_tutor():
             flash(assign_unassign_result_message)
         return redirect('assign_unassign_tutor')
     
-    
+ #TODO literally wrap every url in a try catch ? will that cause too much clutter? pro is you will avoid silent errors where things look good on the front end despite problems ont he back end
 @server.route('/add_students_one_time',methods=['GET','POST'])
 @login_required
 def add_students_one_time():
