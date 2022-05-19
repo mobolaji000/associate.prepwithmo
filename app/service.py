@@ -106,11 +106,12 @@ class CreateMessageAsImage():
       font = ImageFont.truetype('/app/data/Noto_Sans/NotoSans-Bold.ttf', size=15)
       report_date = textToWrite.get('report_date','')
       report_day = datetime.datetime.strptime(report_date, "%m/%d/%Y").strftime('%A')
-      canvas.text((spacing, spacing), "Report for {} ({})".format(report_day,report_date), font=font, fill='black')
-      canvas.line((spacing, spacing+20, spacing + 240, spacing+20),  fill='black')
+      canvas.text((spacing, spacing), textToWrite.get('title',''), font=font, fill='black')
+      #canvas.text((spacing, spacing), "Report for {} ({})".format(report_day,report_date), font=font, fill='black')
+      canvas.line((spacing, spacing+20, spacing + 350, spacing+20),  fill='black')
       counter = 2
       for key,content in textToWrite.items():
-         if key != 'report_date' and key != 'send_report':
+         if key != 'report_date' and key != 'send_report' and key != 'title':
             fill = 'red' if content=='No' else 'green' if content=='Yes' else 'yellow' if content=='N/A' else 'black'
             canvas.text((spacing, spacing*counter), key+": "+content, font=font, fill=fill)
             counter+=1
