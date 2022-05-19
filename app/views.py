@@ -214,9 +214,12 @@ def students_reports(extra_students):
                     memos, not_memos = {}, {}
                     report_date = datetime.datetime.strftime(datetime.datetime.now(pytz.timezone('US/Central')), "%m/%d/%Y")
 
+                    student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key])[0])
+
                     content['report_date'] = report_date
                     report_day = datetime.datetime.now(pytz.timezone('US/Central')).strftime('%A')
-                    memos.update({'title': "Report for {} ({})".format(report_day, report_date)})
+                    memos.update({'title': "{}'s Report for {} ({})".format(student['student_first_name'],report_day, report_date)})
+                    not_memos.update({'title': "{}'s Report for {} ({})".format(student['student_first_name'], report_day, report_date)})
                     for k, v in content.items():
                         if k.startswith('memo_1'):
                             memo_key = "Topics Covered"
@@ -230,7 +233,7 @@ def students_reports(extra_students):
                         else:
                             not_memos.update({k: SendMessagesToClients.cleanMessage(v)})
 
-                    student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key])[0])
+
                     to_numbers = [number for number in [student['parent_1_phone_number'], student['parent_2_phone_number'], student['student_phone_number']] if number != '']
                     SendMessagesToClients.sendSMS(to_numbers=to_numbers, message_as_text=memos, message_as_image=not_memos)
                     flash("Report successfully sent for trusted tutor.")
