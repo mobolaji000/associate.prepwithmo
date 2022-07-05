@@ -144,9 +144,12 @@ def add_students_one_time():
             if tutor != current_user.email:
                 tutors_emails.append(tutor.tutor_email)
 
-        tutors_info = {}
-        students_info = {}
+        from collections import OrderedDict
+        #od = OrderedDict()
+        tutors_info = OrderedDict()
+        students_info = OrderedDict()
         tutor_students_assignments = AppDBUtil.getTutorStudentsAssignment(tutors_emails=tutors_emails)
+
 
         for assignment in tutor_students_assignments:
             students_info.update({assignment.student_email: assignment.student_first_name + " " + assignment.student_last_name+" ("+assignment.student_email+")"})
