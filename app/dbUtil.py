@@ -70,12 +70,12 @@ class AppDBUtil():
 
     @classmethod
     def getTutors(cls):
-        tutors = Tutor.query.filter(Tutor.is_active == True).all()
+        tutors = Tutor.query.filter(Tutor.is_active == True).order_by(Tutor.tutor_first_name.asc()).all()
         return tutors
 
     @classmethod
     def getStudents(cls):
-        students = db.session.query(Student).filter(Student.c.is_active == True).all()
+        students = db.session.query(Student).filter(Student.c.is_active == True).order_by(Student.c.student_first_name.asc()).all()
         return students
 
     @classmethod
