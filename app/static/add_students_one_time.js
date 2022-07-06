@@ -3,15 +3,19 @@ $(document).ready(function() {
  $('input[name="search_by_tutor_or_student"]').change(function() {
          document.getElementById("tutor_or_student_list").innerHTML = "";
          document.getElementById("tutor_or_student_list").value = "";
+
+         document.getElementById("tutor_or_student_data_list").innerHTML = "";
+         document.getElementById("tutor_or_student_data_list").value = "";
+
         if ($(this).val() == "search_by_tutor") {
             var tutor_or_student_list = $("#tutor_or_student_data_list");
             var select_options = "";
-            var tutors_info = $("#tutors_info").attr("data-tutors_info");
-            var tutors_info = JSON.parse(tutors_info);
+            var original_tutors_info = $("#tutors_info").attr("data-tutors_info");
+            var parsed_tutors_info = JSON.parse(original_tutors_info);
             select_options +=  '<option value="" selected disabled hidden>Choose tutor</option>';
-             for (var key in tutors_info){
-                    console.log(tutors_info[key] );
-                    select_options += '<option value="'+key+'">'+tutors_info[key]+'</option>';
+             for (var key in parsed_tutors_info){
+                    console.log(parsed_tutors_info[key] );
+                    select_options += '<option value="'+key+'">'+parsed_tutors_info[key]+'</option>';
                 }
                  document.getElementById("label_for_tutor_or_student_list").innerHTML = 'Select Tutor';
                  document.getElementById("error_for_tutor_or_student_list").innerHTML = 'Valid tutor is required.';
@@ -19,12 +23,12 @@ $(document).ready(function() {
         } else {
            var tutor_or_student_list = $("#tutor_or_student_data_list");
             var select_options = "";
-            var students_info = $("#students_info").attr("data-students_info");
-            var students_info = JSON.parse(students_info);
+            var original_students_info = $("#students_info").attr("data-students_info");
+            var parsed_students_info = JSON.parse(original_students_info);
              select_options +=  '<option value="" selected disabled hidden>Choose student</option>';
-             for (var key in students_info){
-                    console.log(students_info[key] );
-                    select_options += '<option value="'+key+'">'+students_info[key]+'</option>';
+             for (var key in parsed_students_info){
+                    console.log(parsed_students_info[key] );
+                    select_options += '<option value="'+key+'">'+parsed_students_info[key]+'</option>';
                 }
                 document.getElementById("label_for_tutor_or_student_list").innerHTML = 'Select Student';
                  document.getElementById("error_for_tutor_or_student_list").innerHTML = 'Valid student is required.';
