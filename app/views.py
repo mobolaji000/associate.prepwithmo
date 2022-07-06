@@ -149,11 +149,13 @@ def add_students_one_time():
         tutors_info = OrderedDict()
         students_info = OrderedDict()
         tutor_students_assignments = AppDBUtil.getTutorStudentsAssignment(tutors_emails=tutors_emails)
-
+        logger.debug("tutor_students_assignments is {}".format(tutor_students_assignments))
 
         for assignment in tutor_students_assignments:
             students_info.update({assignment.student_email: assignment.student_first_name + " " + assignment.student_last_name+" ("+assignment.student_email+")"})
             tutors_info.update({assignment.tutor_email: assignment.tutor_first_name + " " + assignment.tutor_last_name+" ("+assignment.tutor_email+")"})
+        logger.debug("students_info is {}".format(students_info))
+        logger.debug("tutors_info is {}".format(tutors_info))
         return render_template('add_students_one_time.html', tutors_info=json.dumps(tutors_info), students_info=json.dumps(students_info))
     elif request.method == 'POST':
         students_to_search_for = request.form.to_dict()
