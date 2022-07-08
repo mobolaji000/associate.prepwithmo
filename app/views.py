@@ -87,6 +87,7 @@ def health():
 @server.route("/submit_hours",methods=['GET','POST'])
 @login_required
 def submit_hours():
+    logger.info("Hours being submitted by {}".format(current_user.email))
     day = request.form['day']
     hours = request.form['hours']
     memo = request.form['memo']
@@ -197,6 +198,7 @@ def students_reports(extra_students):
             return render_template('students_reports.html',students_names_data=students_names_data,students_ids_data=students_ids_data,students_emails_data=students_emails_data)
         elif request.method == 'POST':
             logger.debug("In POST for students_reports")
+            logger.info("Students reports being submitted by: {}".format(current_user.email))
             students_reports_contents = request.form.to_dict()
             # auto send reports for trusted tutors
             is_trusted_tutor = False
