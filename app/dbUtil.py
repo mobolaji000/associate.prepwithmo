@@ -129,7 +129,8 @@ class AppDBUtil():
             save_students_reports_message = 'Students reports successfully saved.'
             next_page = 'hours'
             submitted_successfully = False
-            existing_submission_by_tutor = StudentsReports.query.filter((StudentsReports.tutor_email == tutor_email) & (StudentsReports.day == datetime.datetime.now(pytz.timezone('US/Central')).date())).first()
+            #existing_submission_by_tutor = StudentsReports.query.filter((StudentsReports.tutor_email == tutor_email) & (StudentsReports.day == datetime.datetime.now(pytz.timezone('US/Central')).date())).first()
+            existing_submission_by_tutor = StudentsReports.query.filter((StudentsReports.tutor_email == tutor_email) & (StudentsReports.day == datetime.datetime.now().date())).first()
 
             if not students_reports_contents:
                 save_students_reports_message = 'No report saved. No student has been assigned to you.'
@@ -146,7 +147,8 @@ class AppDBUtil():
                     student_email = key.split('_vensti_')[0]
                     report_type = key.split('_vensti_')[1]
                     if report_type == 'attendance':
-                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,attendance=content,day=datetime.datetime.now(pytz.timezone('US/Central')).date())
+                        #statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email, attendance=content, day=datetime.datetime.now(pytz.timezone('US/Central')).date())
+                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,attendance=content,day=datetime.datetime.now().date())
                         statement = statement.on_conflict_do_update(
                             index_elements=['tutor_email','student_email','day'],
                             set_=dict(attendance=content)
@@ -156,8 +158,8 @@ class AppDBUtil():
                         cls.executeDBQuery()
 
                     if report_type == 'home_work':
-
-                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,home_work=content,day=datetime.datetime.now(pytz.timezone('US/Central')).date())
+                        #statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,home_work=content,day=datetime.datetime.now(pytz.timezone('US/Central')).date())
+                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,home_work=content,day=datetime.datetime.now().date())
                         statement = statement.on_conflict_do_update(
                             index_elements=['tutor_email','student_email','day'],
                             set_=dict(home_work=content)
@@ -167,8 +169,8 @@ class AppDBUtil():
                         cls.executeDBQuery()
 
                     if report_type == 'memo_1':
-
-                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_1=content,day=datetime.datetime.now(pytz.timezone('US/Central')).date())
+                        #statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_1=content,day=datetime.datetime.now(pytz.timezone('US/Central')).date())
+                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_1=content,day=datetime.datetime.now().date())
                         statement = statement.on_conflict_do_update(
                             index_elements=['tutor_email','student_email','day'],
                             set_=dict(memo_1=content)
@@ -178,8 +180,8 @@ class AppDBUtil():
                         cls.executeDBQuery()
 
                     if report_type == 'memo_2':
-
-                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_2=content,day=datetime.datetime.now(pytz.timezone('US/Central')).date())
+                        #statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email, memo_2=content, day=datetime.datetime.now(pytz.timezone('US/Central')).date())
+                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_2=content,day=datetime.datetime.now().date())
                         statement = statement.on_conflict_do_update(
                             index_elements=['tutor_email','student_email','day'],
                             set_=dict(memo_2=content)
@@ -189,8 +191,8 @@ class AppDBUtil():
                         cls.executeDBQuery()
 
                     if report_type == 'memo_3':
-
-                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_3=content,day=datetime.datetime.now(pytz.timezone('US/Central')).date())
+                        #statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email, memo_3=content, day=datetime.datetime.now(pytz.timezone('US/Central')).date())
+                        statement = insert(StudentsReports).values(tutor_email=tutor_email, student_email=student_email,memo_3=content,day=datetime.datetime.now().date())
                         statement = statement.on_conflict_do_update(
                             index_elements=['tutor_email','student_email','day'],
                             set_=dict(memo_3=content)
