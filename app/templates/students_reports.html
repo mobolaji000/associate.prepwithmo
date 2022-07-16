@@ -6,8 +6,12 @@
     <title>Hours</title>
 
     <!-- Bootstrap core CSS -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js" type="text/javascript"></script>
+	  	  <script type="text/javascript" src="static/moment-timezone-with-data-10-year-range.js" ></script>
+<!--	  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone.min.js" type="text/javascript"></script>-->
+	  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
 		  integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 	<link href="static/page_style.css" rel="stylesheet">
 	<script type="text/javascript" src="static/students_reports.js"></script>
@@ -15,6 +19,23 @@
     <!-- Custom styles for this template -->
 
 	  <script type="text/javascript">
+
+		  function finalCheckBeforeSubmit()
+		  {
+//
+//
+//
+//               var offset = -6; //adjust to cst
+//               var today = new Date(new Date().getTime() + offset * 3600 * 1000).toISOString();//.split('T')[0];
+//               document.getElementById("_vensti_submission_time").value = today;
+//
+// var moment_date =  new Date(new Date().getTime());//.toISOString().split('T')[0];//.split(',')[0];
+// var parsed_moment_date =  moment(moment_date, 'YYYY-MM-DD HH:mm:ss').tz('America/Chicago')
+// 			  console.log("moment_date is "+moment_date)
+// console.log("parsed_moment_date is "+parsed_moment_date)
+//
+// 			  document.getElementById("_vensti_submission_time").value = parsed_moment_date;
+		  }
 
 	  </script>
 
@@ -102,7 +123,7 @@
 
 											</div>
 
-
+<!-- <input id="_vensti_submission_time" name="_vensti_submission_time" hidden>-->
 											{% if ns.is_trusted_tutor %}
 							<div class="form-check row mt-5 text-center">
   <input class="form-check-input" type="checkbox" value="send" id={{[student_email,"_vensti_send_report"]|join}} name={{[student_email,"_vensti_send_report"]|join}}>
@@ -130,7 +151,7 @@
   {% endfor %}
 									</div>
 									{% if students_names_data|length != 0 %}
-									<br><div class="row justify-content-center"><input id="submit" name="submit" class="btn btn-primary btn-lg btn-block text-center w-25 p-3" type="submit" value="Submit"></div>
+									<br><div class="row justify-content-center"><input id="submit" name="submit" class="btn btn-primary btn-lg btn-block text-center w-25 p-3"  onclick="finalCheckBeforeSubmit();" type="submit" value="Submit"></div>
 									{% else %}
 						<div class="alert alert-warning">
         <button type="button" class="close" data-dismiss="alert">&times;</button>

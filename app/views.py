@@ -200,6 +200,7 @@ def students_reports(extra_students):
             logger.debug("In POST for students_reports")
             logger.info("Students reports being submitted by: {}".format(current_user.email))
             students_reports_contents = request.form.to_dict()
+            logger.debug("Students reports are: {}".format(students_reports_contents))
             # auto send reports for trusted tutors
             is_trusted_tutor = False
             for role in current_user.roles:
@@ -219,12 +220,14 @@ def students_reports(extra_students):
             for key, content in all_students_reports_to_send.items():
                 if is_trusted_tutor and content.get('send_report','') == 'send':
                     memos, not_memos = {}, {}
-                    report_date = datetime.datetime.strftime(datetime.datetime.now(pytz.timezone('US/Central')), "%m/%d/%Y")
+                    report_date = datetime.datetime.strftime(datetime.datetime.now(), "%m/%d/%Y")
+                    #report_date = datetime.datetime.strftime(datetime.datetime.now(pytz.timezone('US/Central')), "%m/%d/%Y")
 
                     student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key])[0])
 
                     content['report_date'] = report_date
-                    report_day = datetime.datetime.now(pytz.timezone('US/Central')).strftime('%A')
+                    #report_day = datetime.datetime.now(pytz.timezone('US/Central')).strftime('%A')
+                    report_day = datetime.datetime.now().strftime('%A')
                     memos.update({'title': "{}'s Report for {} ({})".format(student['student_first_name'],report_day, report_date)})
                     not_memos.update({'title': "{}'s Report for {} ({})".format(student['student_first_name'], report_day, report_date)})
                     for k, v in content.items():
