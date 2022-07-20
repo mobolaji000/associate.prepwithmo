@@ -105,6 +105,18 @@ def logout():
     logout_user()
     return redirect('user/sign-in')
 
+@server.route('/enter_hours',methods=['GET','POST'])
+@login_required
+def enter_hours():
+    #adhoc workaround for Toba
+    if current_user.email == 'mo@prepwithmo.com':
+        return render_template('enter_hours.html')
+    else:
+        flash("You are not permitted to access this page")
+        return redirect('associate_services')
+
+
+
 @server.route('/admin_services',methods=['GET','POST'])
 @roles_required('admin')
 def admin_services():
