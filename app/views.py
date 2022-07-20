@@ -109,7 +109,7 @@ def logout():
 @login_required
 def enter_hours():
     #adhoc workaround for Toba
-    if current_user.email == 'mo@prepwithmo.com':
+    if current_user.email == 'mo@vensti.com':
         return render_template('enter_hours.html')
     else:
         flash("You are not permitted to access this page")
