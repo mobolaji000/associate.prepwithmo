@@ -108,7 +108,7 @@ class CreateMessageAsImage():
       report_day = datetime.datetime.strptime(report_date, "%m/%d/%Y").strftime('%A')
       canvas.text((spacing, spacing), textToWrite.get('title',''), font=font, fill='black')
       #canvas.text((spacing, spacing), "Report for {} ({})".format(report_day,report_date), font=font, fill='black')
-      underline_length = len(textToWrite.get('title',''))*7
+      underline_length = len(textToWrite.get('title',''))*8
       canvas.line((spacing, spacing+20, spacing + underline_length, spacing+20),  fill='black')
       counter = 2
       for key,content in textToWrite.items():
