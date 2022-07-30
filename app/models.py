@@ -29,6 +29,7 @@ class User(db.Model, UserMixin):
 
     # One-to-one Relationship
     #tutor = db.relationship('Tutor', uselist=False)
+    #
 
 
 class Tutor(db.Model):
