@@ -196,6 +196,7 @@ def students_reports(extra_students):
             tutor_student_assignments = AppDBUtil.getTutorStudentsAssignment(tutors_emails=tutors_emails)
 
             for assigned_student in tutor_student_assignments:
+                print("assigned student is ", assigned_student)
                 student = AppDBUtil.getStudentsByEmails(students_emails=[assigned_student.student_email])[0]
                 students_names_data.append(assigned_student.student_first_name + " " + assigned_student.student_last_name)
                 students_emails_data.append(assigned_student.student_email)
@@ -283,7 +284,9 @@ def students_reports(extra_students):
         flash("Error in saving or sending reports. Contact Mo.")
         print(e)
         traceback.print_exc()
-        return redirect(url_for('students_reports'))
+        return redirect(url_for('associate_services'))
+        #replacing with returning to associate_services because if there is an error and you go back to students_reports, you get infinite redirects
+        #return redirect(url_for('students_reports'))
     finally:
         pass
 
