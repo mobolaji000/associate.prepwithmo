@@ -65,7 +65,7 @@ class AWSInstance():
         return secret
 
 
-    #not needed now; might be needed in future
+    #not needed now; might be needed in future#
     def send_email(self, to_address='mo@vensti.com',message='perfectscoremo',subject='perfectscoremo',type=''):
 
         if type == 'create_transaction_new_client':
