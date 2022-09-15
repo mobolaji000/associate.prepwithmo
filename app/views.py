@@ -195,6 +195,7 @@ def students_reports(extra_students):
             students_names_data, students_emails_data, students_ids_data = [], [], []
             tutor_student_assignments = AppDBUtil.getTutorStudentsAssignment(tutors_emails=tutors_emails)
 
+            print("all assigned students are ", tutor_student_assignments)
             for assigned_student in tutor_student_assignments:
                 print("assigned student is ", assigned_student)
                 student = AppDBUtil.getStudentsByEmails(students_emails=[assigned_student.student_email])[0]
