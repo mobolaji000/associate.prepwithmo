@@ -85,7 +85,7 @@ class AppDBUtil():
 
     @classmethod
     def getTutorStudentsAssignment(cls, tutors_emails=[]):
-        tutor_student_assignments = TutorStudentAssignment.query.filter((TutorStudentAssignment.tutor_email.in_(tutors_emails))).order_by(TutorStudentAssignment.student_first_name.asc()).all()
+        tutor_student_assignments = TutorStudentAssignment.query.filter((TutorStudentAssignment.tutor_email.in_(tutors_emails)), Student.c.is_active == True).order_by(TutorStudentAssignment.student_first_name.asc()).all()
         return tutor_student_assignments
 
 
