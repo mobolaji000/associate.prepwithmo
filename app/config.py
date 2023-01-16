@@ -11,7 +11,7 @@ class Config(object):
 
             os.environ["url_to_start_reminder"] = "http://127.0.0.1:5001/"
             os.environ["transaction_setup_url"] = "http://127.0.0.1:5002/transaction_setup"
-            os.environ["lead_info_url"] = "http://127.0.0.1:5002/lead_info"
+            os.environ["lead_info_url"] = "http://127.0.0.1:5002/lead_info_by_mo"
             flask_secret_key = os.environ.get('flask_secret_key')
             SECRET_KEY = os.environ.get('flask_secret_key')
             dbUserName = os.environ.get('dbUserNameLocal')
@@ -42,7 +42,7 @@ class Config(object):
 
             os.environ["url_to_start_reminder"] = "https://associate-prepwithmo-7kkr5.ondigitalocean.app/health"
             os.environ["transaction_setup_url"] = "https://dev-pay-perfectscoremo-7stpz.ondigitalocean.app/transaction_setup"
-            os.environ["lead_info_url"] =  "https://dev-pay-perfectscoremo-7stpz.ondigitalocean.app/lead_info"
+            os.environ["lead_info_url"] =  "https://dev-pay-perfectscoremo-7stpz.ondigitalocean.app/lead_info_by_mo"
             flask_secret_key = awsInstance.get_secret("vensti_admin", "flask_secret_key")
             SECRET_KEY = awsInstance.get_secret("vensti_admin", "flask_secret_key")
             dbUserName = awsInstance.get_secret("do_db_cred", "dev_username")
@@ -73,7 +73,7 @@ class Config(object):
 
             os.environ["url_to_start_reminder"] = "https://associate.prepwithmo.com/health"
             os.environ["transaction_setup_url"] = "https://pay.perfectscoremo.com/transaction_setup"
-            os.environ["lead_info_url"] = "https://pay.perfectscoremo.com/lead_info"
+            os.environ["lead_info_url"] = "https://pay.perfectscoremo.com/lead_info_by_mo"
             flask_secret_key = awsInstance.get_secret("vensti_admin", "flask_secret_key")
             SECRET_KEY = awsInstance.get_secret("vensti_admin", "flask_secret_key")
             dbUserName = awsInstance.get_secret("do_db_cred", "username")
