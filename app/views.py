@@ -26,7 +26,7 @@ login_manager.init_app(server)
 #login_manager.login_view = 'login'
 
 from wtforms import StringField
-from wtforms.fields.html5 import TelField
+from wtforms.fields import TelField
 from wtforms.validators import DataRequired
 
 # Customize the Register form:
