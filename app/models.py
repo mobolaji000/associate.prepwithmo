@@ -33,7 +33,8 @@ class User(db.Model, UserMixin):
 
 
 class Tutor(db.Model):
-    __table_args__ = {'extend_existing': True}
+    with server.app_context():
+        __table_args__ = {'extend_existing': True}
 
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'),primary_key=True)
     user = db.relationship('User', uselist=False)
@@ -109,13 +110,14 @@ def receive_after_update(mapper, connection, target):
     with connection.begin() as trans:
         connection.execute(update(Tutor).where(target.id == Tutor.__table__.c.user_id).values(tutor_email=target.email,tutor_first_name=target.first_name,tutor_last_name=target.last_name,tutor_phone_number=target.phone_number,is_active=target.active))
 
-db.create_all()
-try:
-    db.session.commit()
-except:
-    db.session.rollback()
-    raise
-finally:
-    db.session.close()
+with server.app_context():
+    db.create_all()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
