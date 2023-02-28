@@ -48,9 +48,11 @@ class Tutor(db.Model):
         return '<Tutor {} created>'.format(self.tutor_first_name)
 
 class TutorStudentAssignment(db.Model):
+    #tutor_email = db.Column(db.String(48), primary_key=True, index=True, nullable=False, default='')
     tutor_email = db.Column(db.String(48), db.ForeignKey('tutor.tutor_email'), primary_key=True, index=True, nullable=False, default='')
     tutor_first_name = db.Column(db.String(64), index=True, nullable=False, default='')
     tutor_last_name = db.Column(db.String(64), index=True, nullable=False, default='')
+    #student_email = db.Column(db.String(48), primary_key=True, index=True, nullable=False, default='')
     student_email = db.Column(db.String(48), db.ForeignKey('student.student_email'), primary_key=True, index=True, nullable=False, default='')
     student_first_name = db.Column(db.String(64), index=True, nullable=False, default='')
     student_last_name = db.Column(db.String(64), index=True, nullable=False, default='')

@@ -47,7 +47,9 @@
   <div class="container-fluid">
 
 
-	   <img class="mb-4" src="/static/logo.png" alt="" width="330" height="255">
+	   <div class="py-5 text-center">
+            <img class="d-block mx-auto mb-4" src="/static/logo.png" alt="" width="528" height="201">
+        </div>
 	  {% set ns = namespace(is_admin=false) %}
 	  {% set ns = namespace(is_trusted_tutor=false) %}
 		{% for role in current_user.roles %}
