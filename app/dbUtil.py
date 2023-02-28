@@ -98,7 +98,7 @@ class AppDBUtil():
                 if tutor_student_assignments:
                     assign_unassign_result_message = 'Tutor previously assigned to student.'
                 else:
-                    print(selected_student_email)
+                    logger.info(f"selected_student_email is {selected_student_email}")
                     student =   db.session.query(Student).filter(Student.c.student_email == selected_student_email).first()
                     tutor = Tutor.query.filter(Tutor.tutor_email == selected_tutor_email).first()
                     # print(tutor.tutor_first_name)
