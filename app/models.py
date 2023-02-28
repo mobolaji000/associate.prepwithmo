@@ -1,6 +1,6 @@
 
 
-from app import db, metadata
+from app import db, metadata, server
 from flask_user import UserMixin, UserManager
 from werkzeug.security import generate_password_hash,check_password_hash
 from sqlalchemy import Table, event, update, insert
@@ -96,7 +96,8 @@ class UserRoles(db.Model):
     role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
 
 #research that this was done right, including getting metadata
-Student = Table('student', metadata, autoload_with=db.engine)
+with server.app_context():
+    Student = Table('student', metadata, autoload_with=db.engine)
 
 @event.listens_for(User, 'after_insert')
 def receive_after_insert(mapper, connection, target):
