@@ -131,17 +131,17 @@ def assign_unassign_tutor():
         tutors = AppDBUtil.getTutors()
         students = AppDBUtil.getStudents()
         for tutor in tutors:
-            tutors_data.append(tutor.tutor_first_name + " " + tutor.tutor_last_name+" "+"("+tutor.tutor_email+")")
+            tutors_data.append(tutor.tutor_first_name + " " + tutor.tutor_last_name+" "+"<<"+tutor.tutor_email+">>")
         for student in students:
-            students_data.append(student.student_first_name+" "+student.student_last_name+" "+"("+student.student_email+")")
+            students_data.append(student.student_first_name+" "+student.student_last_name+" "+"<<"+student.student_email+">>")
         return render_template('assign_unassign_tutor.html', tutors_data=tutors_data, students_data=students_data)
     elif request.method == 'POST':
         assign_unassign_tutor_contents = request.form.to_dict()
         print(assign_unassign_tutor_contents)
 
         if assign_unassign_tutor_contents:
-            tutor_email = assign_unassign_tutor_contents['tutor_data'].split('(')[1].split(')')[0]
-            student_email = assign_unassign_tutor_contents['student_data'].split('(')[1].split(')')[0]
+            tutor_email = assign_unassign_tutor_contents['tutor_data'].split('<<')[1].split('>>')[0]
+            student_email = assign_unassign_tutor_contents['student_data'].split('<<')[1].split('>>')[0]
             assign_unassign_result_message = AppDBUtil.assignUnassign(tutor_email,student_email,assign_unassign_tutor_contents['submit'])
             flash(assign_unassign_result_message)
         return redirect('assign_unassign_tutor')
