@@ -6,10 +6,10 @@ FROM tiangolo/uwsgi-nginx-flask:python3.8
 WORKDIR /app
 
 # copy the dependencies file to the working directory
-COPY merged_requirements.txt .
+COPY requirements.txt .
 
 # install dependencies
-RUN pip3 install -r merged_requirements.txt
+RUN pip3 install -r requirements.txt
 #RUN pip3 install -I --ignore-installed -r requirements.txt
 
 COPY /overwrite_flask_user_mixin/user_mixin.py /usr/local/lib/python3.8/site-packages/flask_user/user_mixin.py
