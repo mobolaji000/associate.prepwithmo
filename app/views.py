@@ -404,7 +404,7 @@ def view_memos():
 
                 for report in existing_submission_by_tutor:
                     report_by_day = students_reports.get(report.day.strftime('%m/%d/%Y'), {})
-                    student = dict(AppDBUtil.getStudentsByEmails(students_emails=[report.student_email])[0])
+                    student = dict(AppDBUtil.getStudentsByEmails(students_emails=[report.student_email])[0]._mapping)
                     print(student)
                     report_by_day.update({report.student_email: [student['student_first_name']+" "+student['student_last_name'],report.attendance, report.home_work, report.memo_1, report.memo_2, report.memo_3]})
                     students_reports.update({report.day.strftime('%m/%d/%Y'):report_by_day})
@@ -423,7 +423,7 @@ def view_memos():
                 for key,content in all_students_reports_to_send.items():
                     if content.get('send_report','') == 'send':
                         memos,not_memos = {},{}
-                        student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key])[0])
+                        student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key])[0]._mapping)
 
                         report_date = content.get('report_date','')
                         report_day = datetime.datetime.strptime(report_date, "%m/%d/%Y").strftime('%A')
