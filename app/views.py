@@ -241,7 +241,7 @@ def students_reports(extra_students):
                     logger.debug(f"1. {x}")
                     logger.debug(f"2. {x[0]}")
 
-                    student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key])[0])
+                    student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key])[0]._mapping)
 
                     content['report_date'] = report_date
                     #report_day = datetime.datetime.now(pytz.timezone('US/Central')).strftime('%A')
