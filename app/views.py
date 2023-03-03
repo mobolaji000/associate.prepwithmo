@@ -237,6 +237,10 @@ def students_reports(extra_students):
                     report_date = datetime.datetime.strftime(datetime.datetime.now(), "%m/%d/%Y")
                     #report_date = datetime.datetime.strftime(datetime.datetime.now(pytz.timezone('US/Central')), "%m/%d/%Y")
 
+                    x = AppDBUtil.getStudentsByEmails(students_emails=[key])
+                    logger.debug(f"1. {x}")
+                    logger.debug(f"2. {x[0]}")
+
                     student = dict(AppDBUtil.getStudentsByEmails(students_emails=[key])[0])
 
                     content['report_date'] = report_date
