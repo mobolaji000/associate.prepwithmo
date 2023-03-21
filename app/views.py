@@ -198,10 +198,15 @@ def students_reports(extra_students):
             #print("all assigned students are ", tutor_student_assignments)
             for assigned_student in tutor_student_assignments:
                 print("assigned student is ", assigned_student)
-                student = AppDBUtil.getStudentsByEmails(students_emails=[assigned_student.student_email])[0]
-                students_names_data.append(assigned_student.student_first_name + " " + assigned_student.student_last_name)
-                students_emails_data.append(assigned_student.student_email)
-                students_ids_data.append(student.student_id)
+                student = AppDBUtil.getStudentsByEmails(students_emails=[assigned_student.student_email])
+                if student:
+                    student = student[0]
+                    students_names_data.append(assigned_student.student_first_name + " " + assigned_student.student_last_name)
+                    students_emails_data.append(assigned_student.student_email)
+                    students_ids_data.append(student.student_id)
+                else:
+                    logger.error("Attempting to add inactive or non-existent student")
+                    raise Exception("Attempting to add inactive or non-existent student")
 
             for retrieved_student in AppDBUtil.getStudentsByEmails(students_emails=extra_students.get('students_to_add',[])):
                 print("student id is ", retrieved_student.student_id)
